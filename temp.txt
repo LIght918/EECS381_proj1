@@ -1,1 +1,0 @@
-gcc -c -std=c89 -pedantic-errors -Wmissing-prototypes -Wall p1_main.c

@@ -47,7 +47,6 @@
 		5AFC2F671A5F2EDF00544B45 /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Person.h; path = ../Person.h; sourceTree = "<group>"; };
 		5AFC2F681A5F2EDF00544B45 /* Room.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Room.c; path = ../Room.c; sourceTree = "<group>"; };
 		5AFC2F691A5F2EDF00544B45 /* Room.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Room.h; path = ../Room.h; sourceTree = "<group>"; };
-		5AFC2F6A1A5F2EDF00544B45 /* temp.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = temp.txt; path = ../temp.txt; sourceTree = "<group>"; };
 		5AFC2F6C1A5F2EDF00544B45 /* Ordered_container_demo1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Ordered_container_demo1.c; sourceTree = "<group>"; };
 		5AFC2F6D1A5F2EDF00544B45 /* Utility.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Utility.c; path = ../Utility.c; sourceTree = "<group>"; };
 		5AFC2F6E1A5F2EDF00544B45 /* Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utility.h; path = ../Utility.h; sourceTree = "<group>"; };
@@ -96,7 +95,6 @@
 				5AFC2F671A5F2EDF00544B45 /* Person.h */,
 				5AFC2F681A5F2EDF00544B45 /* Room.c */,
 				5AFC2F691A5F2EDF00544B45 /* Room.h */,
-				5AFC2F6A1A5F2EDF00544B45 /* temp.txt */,
 				5AFC2F6B1A5F2EDF00544B45 /* test_files */,
 				5AFC2F6D1A5F2EDF00544B45 /* Utility.c */,
 				5AFC2F6E1A5F2EDF00544B45 /* Utility.h */,
@@ -293,6 +291,7 @@
 				5AFC2F5C1A5F2E6C00544B45 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
