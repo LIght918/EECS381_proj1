@@ -1,11 +1,6 @@
-
-
 #ifndef ORDERED_CONTAINER_H
-
-#include <stdio.h>
-#include <stdlib.h>
-
 #define ORDERED_CONTAINER_H
+
 
 
 /* 

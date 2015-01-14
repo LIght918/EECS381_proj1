@@ -54,7 +54,7 @@ int main(void)
 	printf("size is %d\n",OC_get_size(container));
 	/* we can use the function pointer typedefs in Ordered_container.h
 	instead of writing out the casts ourselves */
-	OC_apply(container, (OC_apply_fp_t)print_as_string);
+    OC_apply(container, (OC_apply_fp_t)print_as_string);
 	
 	printf("\ninserting %s\n", s4);
 	OC_insert(container, s4);
@@ -86,7 +86,7 @@ int main(void)
 	OC_clear(container);
 	
 	printf("size is %d\n", OC_get_size(container));
-	OC_apply(container, (void (*)(void*))print_as_string);
+	/*OC_apply(container, (void (*)(void*))print_as_string);*/
 	
 	OC_destroy_container(container);
 	/* using the pointer "container" is undefined at this point */
@@ -109,7 +109,7 @@ void print_as_string(void* data_ptr)
 }
 */
 
-int compare_string(char* data_ptr1, char* data_ptr2)
+int compare_string( const char* data_ptr1, const char* data_ptr2)
 {
 	return strcmp(data_ptr1, data_ptr2);
 }
