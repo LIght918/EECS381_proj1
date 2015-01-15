@@ -1,9 +1,19 @@
-/* Complete this header file with include guards and full declarations for
-the int global variables named below. Rename this file to "p1_globals.h" for use
-in your project. Delete this comment to avoid looking silly. */
+/*
+//  p1_globals.h
+//  EECS381_proj1
+//
+//  Created by Charlie OConor on 1/14/15.
+//  Copyright (c) 2015 Charlie OConor. All rights reserved.
+*/
 
-g_Meeting_memory;				/* number of meeting structs currently allocated */
-g_string_memory;				/* number of bytes used in C-strings */
-g_Container_count;				/* number of Ordered_containers currently allocated */
-g_Container_items_in_use;		/* number of Ordered_container items currently in use */
-g_Container_items_allocated;	/* number of Ordered_container items currently allocated */
+#ifndef __EECS381_proj1__p1_globals__
+#define __EECS381_proj1__p1_globals__
+
+/* Do I need this one? */ 
+int g_string_memory;			/* number of bytes used in C-strings */
+
+int g_Container_count;		/* number of Ordered_containers currently allocated */
+int g_Container_items_in_use;	/* number of Ordered_container items currently in use */
+int g_Container_items_allocated;	/* number of Ordered_container items currently allocated */
+
+#endif /* defined(__EECS381_proj1__p1_globals__) */

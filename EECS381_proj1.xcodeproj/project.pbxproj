@@ -7,17 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5AE624B81A673F7700D95555 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624A31A673F7700D95555 /* Makefile */; };
-		5AE624B91A673F7700D95555 /* Meeting.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624A41A673F7700D95555 /* Meeting.c */; };
-		5AE624BA1A673F7700D95555 /* Ordered_container_array.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624A61A673F7700D95555 /* Ordered_container_array.c */; };
 		5AE624BB1A673F7700D95555 /* Ordered_container_list.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624A71A673F7700D95555 /* Ordered_container_list.c */; };
-		5AE624BC1A673F7700D95555 /* p1_globals.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624A91A673F7700D95555 /* p1_globals.c */; };
-		5AE624BD1A673F7700D95555 /* p1_main.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624AB1A673F7700D95555 /* p1_main.c */; };
-		5AE624BE1A673F7700D95555 /* Person.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624AC1A673F7700D95555 /* Person.c */; };
-		5AE624BF1A673F7700D95555 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624AE1A673F7700D95555 /* README.md */; };
-		5AE624C01A673F7700D95555 /* Room.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624AF1A673F7700D95555 /* Room.c */; };
-		5AE624C11A673F7700D95555 /* Ordered_container_demo1.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624B21A673F7700D95555 /* Ordered_container_demo1.c */; };
-		5AE624C21A673F7700D95555 /* Utility.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624B61A673F7700D95555 /* Utility.c */; };
+		5AE624C41A673FC700D95555 /* Ordered_container_test.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624C31A673FC700D95555 /* Ordered_container_test.c */; };
+		5AE624C71A6743CE00D95555 /* Record.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624C51A6743CE00D95555 /* Record.c */; };
+		5AE624CA1A67440F00D95555 /* Utility.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624C81A67440F00D95555 /* Utility.c */; };
+		5AE624CD1A6747DB00D95555 /* Collection.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624CB1A6747DB00D95555 /* Collection.c */; };
+		5AE624D01A67484A00D95555 /* p1_globals.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624CE1A67484A00D95555 /* p1_globals.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -34,24 +29,23 @@
 
 /* Begin PBXFileReference section */
 		5AE624A31A673F7700D95555 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		5AE624A41A673F7700D95555 /* Meeting.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Meeting.c; sourceTree = "<group>"; };
-		5AE624A51A673F7700D95555 /* Meeting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Meeting.h; sourceTree = "<group>"; };
 		5AE624A61A673F7700D95555 /* Ordered_container_array.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Ordered_container_array.c; sourceTree = "<group>"; };
 		5AE624A71A673F7700D95555 /* Ordered_container_list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Ordered_container_list.c; sourceTree = "<group>"; };
 		5AE624A81A673F7700D95555 /* Ordered_container.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ordered_container.h; sourceTree = "<group>"; };
-		5AE624A91A673F7700D95555 /* p1_globals.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = p1_globals.c; sourceTree = "<group>"; };
-		5AE624AA1A673F7700D95555 /* p1_globals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1_globals.h; sourceTree = "<group>"; };
 		5AE624AB1A673F7700D95555 /* p1_main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = p1_main.c; sourceTree = "<group>"; };
-		5AE624AC1A673F7700D95555 /* Person.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Person.c; sourceTree = "<group>"; };
-		5AE624AD1A673F7700D95555 /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
 		5AE624AE1A673F7700D95555 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		5AE624AF1A673F7700D95555 /* Room.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Room.c; sourceTree = "<group>"; };
-		5AE624B01A673F7700D95555 /* Room.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Room.h; sourceTree = "<group>"; };
 		5AE624B21A673F7700D95555 /* Ordered_container_demo1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Ordered_container_demo1.c; sourceTree = "<group>"; };
 		5AE624B41A673F7700D95555 /* Ordered_contain_demo1.correct.out */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Ordered_contain_demo1.correct.out; sourceTree = "<group>"; };
 		5AE624B51A673F7700D95555 /* Ordered_contain_test.correct.out */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Ordered_contain_test.correct.out; sourceTree = "<group>"; };
-		5AE624B61A673F7700D95555 /* Utility.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Utility.c; sourceTree = "<group>"; };
-		5AE624B71A673F7700D95555 /* Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utility.h; sourceTree = "<group>"; };
+		5AE624C31A673FC700D95555 /* Ordered_container_test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Ordered_container_test.c; sourceTree = "<group>"; };
+		5AE624C51A6743CE00D95555 /* Record.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Record.c; sourceTree = "<group>"; };
+		5AE624C61A6743CE00D95555 /* Record.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Record.h; sourceTree = "<group>"; };
+		5AE624C81A67440F00D95555 /* Utility.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Utility.c; sourceTree = "<group>"; };
+		5AE624C91A67440F00D95555 /* Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utility.h; sourceTree = "<group>"; };
+		5AE624CB1A6747DB00D95555 /* Collection.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Collection.c; sourceTree = "<group>"; };
+		5AE624CC1A6747DB00D95555 /* Collection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Collection.h; sourceTree = "<group>"; };
+		5AE624CE1A67484A00D95555 /* p1_globals.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = p1_globals.c; sourceTree = "<group>"; };
+		5AE624CF1A67484A00D95555 /* p1_globals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p1_globals.h; sourceTree = "<group>"; };
 		5AFC2F531A5F2E6C00544B45 /* EECS381_proj1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EECS381_proj1; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -70,6 +64,7 @@
 			isa = PBXGroup;
 			children = (
 				5AE624B21A673F7700D95555 /* Ordered_container_demo1.c */,
+				5AE624C31A673FC700D95555 /* Ordered_container_test.c */,
 			);
 			path = test_files;
 			sourceTree = "<group>";
@@ -102,24 +97,22 @@
 		5AFC2F551A5F2E6C00544B45 /* EECS381_proj1 */ = {
 			isa = PBXGroup;
 			children = (
+				5AE624CB1A6747DB00D95555 /* Collection.c */,
+				5AE624CC1A6747DB00D95555 /* Collection.h */,
+				5AE624CE1A67484A00D95555 /* p1_globals.c */,
+				5AE624CF1A67484A00D95555 /* p1_globals.h */,
 				5AE624A31A673F7700D95555 /* Makefile */,
-				5AE624A41A673F7700D95555 /* Meeting.c */,
-				5AE624A51A673F7700D95555 /* Meeting.h */,
 				5AE624A61A673F7700D95555 /* Ordered_container_array.c */,
 				5AE624A71A673F7700D95555 /* Ordered_container_list.c */,
+				5AE624C51A6743CE00D95555 /* Record.c */,
+				5AE624C61A6743CE00D95555 /* Record.h */,
 				5AE624A81A673F7700D95555 /* Ordered_container.h */,
-				5AE624A91A673F7700D95555 /* p1_globals.c */,
-				5AE624AA1A673F7700D95555 /* p1_globals.h */,
 				5AE624AB1A673F7700D95555 /* p1_main.c */,
-				5AE624AC1A673F7700D95555 /* Person.c */,
-				5AE624AD1A673F7700D95555 /* Person.h */,
 				5AE624AE1A673F7700D95555 /* README.md */,
-				5AE624AF1A673F7700D95555 /* Room.c */,
-				5AE624B01A673F7700D95555 /* Room.h */,
 				5AE624B11A673F7700D95555 /* test_files */,
 				5AE624B31A673F7700D95555 /* test_output */,
-				5AE624B61A673F7700D95555 /* Utility.c */,
-				5AE624B71A673F7700D95555 /* Utility.h */,
+				5AE624C81A67440F00D95555 /* Utility.c */,
+				5AE624C91A67440F00D95555 /* Utility.h */,
 			);
 			path = EECS381_proj1;
 			sourceTree = "<group>";
@@ -180,17 +173,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5AE624BC1A673F7700D95555 /* p1_globals.c in Sources */,
-				5AE624C01A673F7700D95555 /* Room.c in Sources */,
-				5AE624BE1A673F7700D95555 /* Person.c in Sources */,
-				5AE624C21A673F7700D95555 /* Utility.c in Sources */,
-				5AE624BD1A673F7700D95555 /* p1_main.c in Sources */,
-				5AE624B81A673F7700D95555 /* Makefile in Sources */,
-				5AE624B91A673F7700D95555 /* Meeting.c in Sources */,
-				5AE624C11A673F7700D95555 /* Ordered_container_demo1.c in Sources */,
-				5AE624BA1A673F7700D95555 /* Ordered_container_array.c in Sources */,
-				5AE624BF1A673F7700D95555 /* README.md in Sources */,
+				5AE624C41A673FC700D95555 /* Ordered_container_test.c in Sources */,
+				5AE624CD1A6747DB00D95555 /* Collection.c in Sources */,
+				5AE624C71A6743CE00D95555 /* Record.c in Sources */,
+				5AE624CA1A67440F00D95555 /* Utility.c in Sources */,
 				5AE624BB1A673F7700D95555 /* Ordered_container_list.c in Sources */,
+				5AE624D01A67484A00D95555 /* p1_globals.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,6 +262,13 @@
 		5AFC2F5B1A5F2E6C00544B45 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				OTHER_CFLAGS = (
+					"-c",
+					"-std=c89",
+					"-pedantic-errors",
+					"-Wmissing-prototypes",
+					"-Wall",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -281,6 +276,13 @@
 		5AFC2F5C1A5F2E6C00544B45 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				OTHER_CFLAGS = (
+					"-c",
+					"-std=c89",
+					"-pedantic-errors",
+					"-Wmissing-prototypes",
+					"-Wall",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

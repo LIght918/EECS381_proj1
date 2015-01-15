@@ -36,6 +36,8 @@ struct Ordered_container
 /* init member variables in OC to default values */
 static void init_Order_container( struct Ordered_container* c_ptr );
 
+/* updates the global vars keeping track of the count of items used and allocated */
+static void update_g_item_count( int num );
 
 struct Ordered_container* OC_create_container(OC_comp_fp_t f_ptr)
 {
@@ -53,6 +55,9 @@ struct Ordered_container* OC_create_container(OC_comp_fp_t f_ptr)
 	new_container->comp_func = f_ptr;
     init_Order_container( new_container );
 
+    /* keep track of the num of contianers */
+    g_Container_count++;
+    
 	return new_container;
 }
 
@@ -62,6 +67,9 @@ void OC_destroy_container(struct Ordered_container* c_ptr)
     OC_clear( c_ptr );
     
     free( c_ptr );
+    
+    /* keep track of the num of contianers */
+    g_Container_count--;
 }
 
 void OC_clear(struct Ordered_container* c_ptr)
@@ -85,6 +93,7 @@ void OC_clear(struct Ordered_container* c_ptr)
     
     /* reset the member var */
     init_Order_container( c_ptr );
+    update_g_item_count( -size );
 }
 
 
@@ -198,17 +207,18 @@ void OC_delete_item(struct Ordered_container* c_ptr, void* item_ptr)
     /* is the data_ptr dynamic */
     free( node_to_remove );
     c_ptr->size--;
+    update_g_item_count( -1 );
 }
 
-void OC_insert(struct Ordered_container* c_ptr, void* data_ptr)
+void OC_insert(struct Ordered_container* c_ptr, const void* data_ptr)
 {
 
     struct LL_Node* cur_node = c_ptr->first;
     struct LL_Node* new_node = malloc( sizeof( struct LL_Node ) );
     
-    new_node->data_ptr = data_ptr;
+    new_node->data_ptr = (void*)data_ptr;
     c_ptr->size++ ;
-    
+    update_g_item_count( 1 );
     
     /* if the container is empty add it as first and last */
     if ( c_ptr->first == NULL )
@@ -331,3 +341,9 @@ int OC_apply_if_arg(const struct Ordered_container* c_ptr, OC_apply_if_arg_fp_t 
 	return 0; 
 }
 
+
+static void update_g_item_count( int num )
+{
+    /* make sure this works */
+    g_Container_items_allocated = g_Container_items_in_use += num;
+}
