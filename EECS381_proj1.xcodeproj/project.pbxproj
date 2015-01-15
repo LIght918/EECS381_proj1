@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5AE6247A1A66D7A000D95555 /* Ordered_container_test.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624791A66D7A000D95555 /* Ordered_container_test.c */; };
 		5AFC2F701A5F2EDF00544B45 /* Meeting.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AFC2F5E1A5F2EDF00544B45 /* Meeting.c */; };
 		5AFC2F711A5F2EDF00544B45 /* Ordered_container_array.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AFC2F601A5F2EDF00544B45 /* Ordered_container_array.c */; };
 		5AFC2F721A5F2EDF00544B45 /* Ordered_container_list.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AFC2F611A5F2EDF00544B45 /* Ordered_container_list.c */; };
 		5AFC2F731A5F2EDF00544B45 /* p1_globals.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AFC2F631A5F2EDF00544B45 /* p1_globals.c */; };
 		5AFC2F751A5F2EDF00544B45 /* Person.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AFC2F661A5F2EDF00544B45 /* Person.c */; };
 		5AFC2F761A5F2EDF00544B45 /* Room.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AFC2F681A5F2EDF00544B45 /* Room.c */; };
-		5AFC2F771A5F2EDF00544B45 /* Ordered_container_demo1.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AFC2F6C1A5F2EDF00544B45 /* Ordered_container_demo1.c */; };
 		5AFC2F781A5F2EDF00544B45 /* Utility.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AFC2F6D1A5F2EDF00544B45 /* Utility.c */; };
 /* End PBXBuildFile section */
 
@@ -30,6 +30,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5AE624791A66D7A000D95555 /* Ordered_container_test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Ordered_container_test.c; sourceTree = "<group>"; };
 		5AFC2F531A5F2E6C00544B45 /* EECS381_proj1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EECS381_proj1; sourceTree = BUILT_PRODUCTS_DIR; };
 		5AFC2F561A5F2E6C00544B45 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		5AFC2F5D1A5F2EDF00544B45 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../Makefile; sourceTree = "<group>"; };
@@ -105,6 +106,7 @@
 			isa = PBXGroup;
 			children = (
 				5AFC2F6C1A5F2EDF00544B45 /* Ordered_container_demo1.c */,
+				5AE624791A66D7A000D95555 /* Ordered_container_test.c */,
 			);
 			name = test_files;
 			path = ../test_files;
@@ -166,12 +168,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5AE6247A1A66D7A000D95555 /* Ordered_container_test.c in Sources */,
 				5AFC2F751A5F2EDF00544B45 /* Person.c in Sources */,
 				5AFC2F761A5F2EDF00544B45 /* Room.c in Sources */,
 				5AFC2F781A5F2EDF00544B45 /* Utility.c in Sources */,
 				5AFC2F721A5F2EDF00544B45 /* Ordered_container_list.c in Sources */,
 				5AFC2F701A5F2EDF00544B45 /* Meeting.c in Sources */,
-				5AFC2F771A5F2EDF00544B45 /* Ordered_container_demo1.c in Sources */,
 				5AFC2F711A5F2EDF00544B45 /* Ordered_container_array.c in Sources */,
 				5AFC2F731A5F2EDF00544B45 /* p1_globals.c in Sources */,
 			);

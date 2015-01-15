@@ -58,13 +58,6 @@ struct Ordered_container* OC_create_container(OC_comp_fp_t f_ptr)
 
 void OC_destroy_container(struct Ordered_container* c_ptr)
 {
-    
-    if ( c_ptr == NULL )
-    {
-        /* thow an error if given a NULL ptr s*/
-        return;
-    }
-    
     /* clean up items in container */
     OC_clear( c_ptr );
     
@@ -77,12 +70,6 @@ void OC_clear(struct Ordered_container* c_ptr)
     struct LL_Node* prev_node = NULL;
     int i = 0 ;
     int size;
-    
-    if ( c_ptr == NULL )
-    {
-        /* thow an error if given a NULL ptr */
-        return;
-    }
     
     size = c_ptr->size;
     cur_node = c_ptr->first;
@@ -129,7 +116,7 @@ static void init_Order_container( struct Ordered_container* c_ptr )
 
 int OC_empty(const struct Ordered_container* c_ptr)
 {
-    return OC_get_size( c_ptr );
+    return !OC_get_size( c_ptr );
 }
 
 void* OC_get_data_ptr(const void* item_ptr)
