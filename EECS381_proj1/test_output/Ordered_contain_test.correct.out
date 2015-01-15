@@ -1,0 +1,31 @@
+Starting test
+Creating
+Inserting t5
+	size is 1
+Inserting t6
+	size is 2
+	t5
+	t6
+Inserting t3
+	size is 3
+Inserting t9
+	size is 4
+Inserting t7
+	size is 5
+	t3
+	t5
+	t6
+	t7
+	t9
+Inserting t1
+	size is 6
+Inserting t2
+	size is 7
+	s1
+	t1
+	t2
+	t3
+	t5
+	t6
+	t7
+	t9
