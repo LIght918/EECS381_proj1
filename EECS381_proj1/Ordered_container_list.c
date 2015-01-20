@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <assert.h> /* TODO remove for release */
 
+
 /* skeleton file for Ordered_container_list.c
 The struct declarations below must be used for the linked-list node and Ordered_container objects.
 Remove this comment and complete this file with all necessary code.
@@ -42,13 +43,6 @@ static void update_g_item_count( int num );
 struct Ordered_container* OC_create_container(OC_comp_fp_t f_ptr)
 {
 	struct Ordered_container* new_container;
-
-	if ( f_ptr == NULL )
-	{
-		/* throw and error */
-
-		return NULL; 
-	}
 
 	new_container = ( struct Ordered_container* ) malloc( sizeof( struct Ordered_container ) ); 
 
@@ -99,24 +93,11 @@ void OC_clear(struct Ordered_container* c_ptr)
 
 int OC_get_size(const struct Ordered_container* c_ptr)
 {
-	if ( c_ptr == NULL )
-	{
-		/* throw error */
-		return -1 ;
-	}
-    
 	return c_ptr->size; 
 }
 
 static void init_Order_container( struct Ordered_container* c_ptr )
 {
-    /* Do I need to check if this is a static function? */
-    if ( c_ptr == NULL )
-    {
-        /* throw error */
-        return;
-    }
-    
     /* set member vars to default values */
     c_ptr->first = NULL;
     c_ptr->last = NULL;
@@ -130,12 +111,6 @@ int OC_empty(const struct Ordered_container* c_ptr)
 
 void* OC_get_data_ptr(const void* item_ptr)
 {
-    if ( item_ptr == NULL )
-    {
-        /* throw error */
-        return NULL;
-    }
-    
     /* cast the ptr and return the data_ptr */
     return ( (struct LL_Node*)item_ptr )->data_ptr;
 }
@@ -210,9 +185,9 @@ void OC_delete_item(struct Ordered_container* c_ptr, void* item_ptr)
     update_g_item_count( -1 );
 }
 
+/* look at this func again */
 void OC_insert(struct Ordered_container* c_ptr, const void* data_ptr)
 {
-
     struct LL_Node* cur_node = c_ptr->first;
     struct LL_Node* new_node = malloc( sizeof( struct LL_Node ) );
     
@@ -317,6 +292,7 @@ int OC_apply_if(const struct Ordered_container* c_ptr, OC_apply_if_fp_t afp)
 void OC_apply_arg(const struct Ordered_container* c_ptr, OC_apply_arg_fp_t afp, void* arg_ptr)
 {
 	struct LL_Node* cur_node = c_ptr->first;
+    
 	while ( cur_node != NULL )
 	{
 		afp( cur_node->data_ptr, arg_ptr ); 

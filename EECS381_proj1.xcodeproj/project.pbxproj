@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5AE624BB1A673F7700D95555 /* Ordered_container_list.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624A71A673F7700D95555 /* Ordered_container_list.c */; };
-		5AE624C41A673FC700D95555 /* Ordered_container_test.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624C31A673FC700D95555 /* Ordered_container_test.c */; };
 		5AE624C71A6743CE00D95555 /* Record.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624C51A6743CE00D95555 /* Record.c */; };
 		5AE624CA1A67440F00D95555 /* Utility.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624C81A67440F00D95555 /* Utility.c */; };
 		5AE624CD1A6747DB00D95555 /* Collection.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624CB1A6747DB00D95555 /* Collection.c */; };
 		5AE624D01A67484A00D95555 /* p1_globals.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624CE1A67484A00D95555 /* p1_globals.c */; };
+		5AE624D31A6F00D100D95555 /* Ordered_container_test.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624C31A673FC700D95555 /* Ordered_container_test.c */; };
+		5AE624D51A6F018900D95555 /* Ordered_container_array.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624A61A673F7700D95555 /* Ordered_container_array.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -173,12 +173,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5AE624C41A673FC700D95555 /* Ordered_container_test.c in Sources */,
 				5AE624CD1A6747DB00D95555 /* Collection.c in Sources */,
 				5AE624C71A6743CE00D95555 /* Record.c in Sources */,
+				5AE624D31A6F00D100D95555 /* Ordered_container_test.c in Sources */,
 				5AE624CA1A67440F00D95555 /* Utility.c in Sources */,
-				5AE624BB1A673F7700D95555 /* Ordered_container_list.c in Sources */,
 				5AE624D01A67484A00D95555 /* p1_globals.c in Sources */,
+				5AE624D51A6F018900D95555 /* Ordered_container_array.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

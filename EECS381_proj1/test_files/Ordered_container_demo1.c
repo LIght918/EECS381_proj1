@@ -109,7 +109,7 @@ void print_as_string(void* data_ptr)
 }
 */
 
-int compare_string(char* data_ptr1, char* data_ptr2)
+int compare_string(const char* data_ptr1, const char* data_ptr2)
 {
 	return strcmp(data_ptr1, data_ptr2);
 }
