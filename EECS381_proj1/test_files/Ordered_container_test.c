@@ -11,7 +11,6 @@
 #include <string.h>
 #include <assert.h>
 
-
 /* function prototypes */
 void print_as_string(char* data_ptr);
 int compare_string(const char* data_ptr1, const char* data_ptr2);
@@ -26,13 +25,12 @@ int main( void )
 {
     int i; 
     int cur_size_container = 0;
-    int bool_value;
     
     char* test_string[] = { "t5", "t6", "t3", "t9", "t7", "t1", "t2" };
     int size_test = 7;
     
     char* s1 = "s1";
-    char* s2 = "s2";
+    /*char* s2 = "s2";
     char* s3 = "s3";
     char* s4 = "s4";
     char* s5 = "s5";
@@ -42,7 +40,7 @@ int main( void )
     char* probe2 = "s99";
     
     char* probe3 = "t2";
-    char* probe4 = "t11";
+    char* probe4 = "t11";*/
     
     void* node;
     
@@ -111,8 +109,7 @@ int main( void )
         printf( "%d: removing %s\n", i , test_string[i] );
         OC_apply( container, (void (*)(void*))print_as_string) ;
         find_and_remove( container, test_string[i] );
-        /*assert( ( size_test - i - 1 ) == OC_get_size( container ) );*/
-        
+        assert( ( size_test - i - 1 ) == OC_get_size( container ) );
     }
     
     /* clean up memory */

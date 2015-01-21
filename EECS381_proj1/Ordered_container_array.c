@@ -4,8 +4,8 @@ Remove this comment and complete this file with all necessary code.
 */
 
 #include "Ordered_container.h"
+
 #include <stdlib.h>
-#include <stdio.h> /* remove for release */
 #define NDEBUG
 #include <assert.h>
 
@@ -161,22 +161,12 @@ static void OC_grow( struct Ordered_container* c_ptr )
 static void copy_array( void** array_old, void** array_new, int size )
 {
     int i;
-    /*size  -= 1;
-    array_new += size;
-    array_old += size;*/
     for (i = 0; i < size; ++i )
     {
         *array_new = *array_old;
         array_new++;
         array_old++;
     }
-    /*
-     for ( i = 0; i < size_subarray; ++i )
-     {
-     printf( "c_ptr->size - i == %d \n", c_ptr->size - i );
-     c_ptr->array[ c_ptr->size - i ] = c_ptr->array[ c_ptr->size - 1 - i ];
-     }
-     */
 }
 
 void OC_delete_item(struct Ordered_container* c_ptr, void* item_ptr)
@@ -185,7 +175,9 @@ void OC_delete_item(struct Ordered_container* c_ptr, void* item_ptr)
     /* find the new size and decrement the size member variable 
        subarray_size = total_size - size of the front array */
     int size_subarray = ( --c_ptr->size ) - (int)(  node - c_ptr->array );
+    
     /* need to take care of globals */
+    g_Container_items_in_use--;
     
     copy_array( node + 1, node, size_subarray );
 }
@@ -212,10 +204,7 @@ void OC_insert(struct Ordered_container* c_ptr, const void* data_ptr)
     node = OC_search( c_ptr, c_ptr->comp_fun, data_ptr );
     
     size_subarray = c_ptr->size - (int)( node - c_ptr->array ) ;
-    
-    
 
-    
     /* move the right part of the subarray on place to the right */
     /* copy_array( node, node + 1, size_subarray ); */
     for ( i = 0; i < size_subarray; ++i )

@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 Charlie OConor. All rights reserved.
 */
 
-#ifndef __EECS381_proj1__p1_globals__
-#define __EECS381_proj1__p1_globals__
+#ifndef EECS381_proj1__p1_globals__
+#define EECS381_proj1__p1_globals__
 
 /* Do I need this one? */ 
 int g_string_memory;			/* number of bytes used in C-strings */
