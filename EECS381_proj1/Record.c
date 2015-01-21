@@ -7,9 +7,13 @@
 */
 
 #include "Record.h"
+#include "Utility.h"
+#include "p1_globals.h" /* holds the macros */
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <assert.h>
+
 
 /* skeleton file for Record.c
  The struct declaration below must be used for Record objects.
@@ -25,8 +29,7 @@ struct Record {
 };
 
 /* local global */
-int Record_ID_counter = 0;
-
+int Record_ID_counter = 1;
 
 struct Record* create_Record(const char* medium, const char* title)
 {
@@ -47,6 +50,7 @@ struct Record* create_Record(const char* medium, const char* title)
 
 void destroy_Record(struct Record* record_ptr)
 {
+    assert( record_ptr );
     free( record_ptr->title );
     free( record_ptr->medium);
     free( record_ptr );
@@ -64,6 +68,7 @@ const char* get_Record_title(const struct Record* record_ptr)
 
 void set_Record_rating(struct Record* record_ptr, int new_rating)
 {
+    /* should we enforce 1-5 rating */
     record_ptr->rating = new_rating;
 }
 
@@ -75,7 +80,7 @@ void print_Record(const struct Record* record_ptr)
 void save_Record(const struct Record* record_ptr, FILE* outfile)
 {
     
-    if ( record_ptr->rating == 0  )
+    if ( outfile == stdout && record_ptr->rating == 0 )
     {
         fprintf( outfile, "%d: %s u %s\n", record_ptr->ID,
                record_ptr->medium, record_ptr->title );
@@ -89,14 +94,35 @@ void save_Record(const struct Record* record_ptr, FILE* outfile)
 
 void reset_Record_ID_counter(void)
 {
-    Record_ID_counter = 0;
+    Record_ID_counter = 1;
 }
 
 struct Record* load_Record(FILE* infile)
 {
-    /*scanf( "%d", )*/
+    char c;
+    struct Record* new_record;
+    int ID, rating;
+    char medium[ MEDIUM_MAX_SIZE ];
+    char title[ TITLE_MAX_BUFF_SIZE ];
     
-    return NULL;
+    if ( fscanf( infile, "%d %s%c%d",
+                &ID, medium, &c, &rating ) != 4 )
+    {
+        /* throw an error */
+        return NULL;
+    }
+    if ( !get_title( infile, title ) ) {
+        /* throw an error */
+        /* return NULL;*/
+    }
+    
+    
+    new_record = create_Record( medium, title );
+    new_record->rating = rating;
+    
+    print_Record( new_record ); 
+    
+    return new_record;
 }
 
 

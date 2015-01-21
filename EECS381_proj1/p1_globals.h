@@ -9,6 +9,14 @@
 #ifndef EECS381_proj1__p1_globals__
 #define EECS381_proj1__p1_globals__
 
+/* size limits */
+#define NAME_MAX_SIZE 15
+#define MEDIUM_MAX_SIZE 7
+#define FILENAME_MAX_SIZE 31
+#define TITLE_MAX_BUFF_SIZE 64
+
+
+
 /* Do I need this one? */ 
 int g_string_memory;			/* number of bytes used in C-strings */
 

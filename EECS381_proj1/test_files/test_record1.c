@@ -7,6 +7,7 @@
 */
 
 #include "Record.h"
+#include "Utility.h"
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
@@ -23,7 +24,7 @@ int main( void )
     struct Record* r1 = create_Record( medium1, title1 );
     
     
-    assert( get_Record_ID(r1) == 0 );
+    assert( get_Record_ID(r1) == 1 );
     assert( strcmp( get_Record_title(r1), title1 ) == 0 );
     
     
@@ -39,7 +40,7 @@ int main( void )
     for( i = 0; i < new_rating; ++i )
     {
         temp = create_Record( medium1, title1 );
-        assert( get_Record_ID(temp) == i );
+        assert( get_Record_ID(temp) == ( i + 1 ) );
         set_Record_rating( temp, 10 - i );
         save_Record(temp , outfile );
         destroy_Record( temp );
