@@ -8,9 +8,13 @@
 
 #include "Collection.h"
 #include "Ordered_container.h"
+#include "p1_globals.h"
+#include "Utility.h"
 #include "Record.h"
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
+/* #define NDEBUG */ /* include that on release */ 
 
 /* a Collection contains a pointer to a C-string name and a container
  that holds pointers to Records - the members. */
@@ -21,6 +25,8 @@ struct Collection {
 
 /* uses strcmp on the title of each record and returns the value */
 static int comp_Record( const void* left, const void* right );
+/* function prints out the title to the outfile and a newline */
+static void print_Record_title( struct Record* rec, FILE* outfile );
 
 struct Collection* create_Collection(const char* name)
 {
@@ -75,8 +81,15 @@ int is_Collection_member_present(const struct Collection* collection_ptr, const 
 int remove_Collection_member(struct Collection* collection_ptr, const struct Record* record_ptr)
 {
     void* record_to_rm = OC_find_item( collection_ptr->members, record_ptr );
-    OC_delete_item( collection_ptr->members, record_to_rm );
-    return (int)OC_find_item( collection_ptr->members, record_ptr );
+    
+    /* can I pass a NULL to OC_delete */
+    if ( record_to_rm )
+    {
+        OC_delete_item( collection_ptr->members, record_to_rm );
+        return 0;
+    }
+    
+    return 1;
 }
 
 void print_Collection(const struct Collection* collection_ptr)
@@ -86,11 +99,57 @@ void print_Collection(const struct Collection* collection_ptr)
 
 void save_Collection(const struct Collection* collection_ptr, FILE* outfile)
 {
-    OC_apply_arg(collection_ptr->members, ( void(*)( void * ,void*))save_Record, outfile );
+    /* output the name and number of records in the Collection */
+    fprintf( outfile, "%s%d", collection_ptr->name, OC_get_size( collection_ptr->members ) );
+    /* loop through the whole collection outputing the title to the file */
+    OC_apply_arg( collection_ptr->members, ( void(*)( void * ,void*))save_Record, outfile );
 }
+
+struct Collection* load_Collection(FILE* input_file, const struct Ordered_container* records)
+{
+ 
+    /* what do I do with records */
+    char name[ NAME_MAX_SIZE ];
+    char title[ TITLE_MAX_BUFF_SIZE ];
+    int  i, num_records;
+    struct Collection* new_collection;
+    void* cur_record = NULL;
+    
+    /* read in the name of the collection and the number of records*/
+    if ( fscanf( input_file, "%s %d", name, &num_records ) != 2 )
+        return NULL;
+    
+    new_collection = create_Collection( name );
+    
+    for ( i = 0; i < num_records; ++i)
+    {
+        /* read in the title and then check if it is in records */
+        if ( !get_title( input_file, title ) &&
+               ( cur_record = OC_find_item( records, title ) ) )
+        {
+            /* if given bad input clean up mem and return NULL */
+            destroy_Collection( new_collection );
+            return NULL;
+        }
+        
+        OC_insert( new_collection->members, cur_record );
+    }
+    
+    
+    return NULL;
+}
+
+
+/* Helper Functions */
 
 static int comp_Record( const void* left, const void* right )
 {
     return strcmp( get_Record_title((struct Record* )left),
-                  get_Record_title((struct Record* )right) );
+                   get_Record_title((struct Record* )right) );
+}
+
+static void print_Record_title( struct Record* rec, FILE* outfile )
+{
+    /* function prints out the title to the outfile and a newline */
+    fprintf( outfile, "%s\n", get_Record_title( rec ) );
 }

@@ -13,7 +13,7 @@ struct Record;
 
 /* Create a Record object, giving it the next ID number using the ID number counter.
  The function that allocates dynamic memory for a Record and the contained data. The rating is set to 0. */
-struct Record* create_Record(const char* medium, const char* title);
+struct Record* create_Record( const char* medium, const char* title);
 
 /* Destroy a Record object
  This is the only function that frees the memory for a Record

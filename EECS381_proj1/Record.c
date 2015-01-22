@@ -72,24 +72,26 @@ void set_Record_rating(struct Record* record_ptr, int new_rating)
     record_ptr->rating = new_rating;
 }
 
+/* is there a way to combine these two func */
 void print_Record(const struct Record* record_ptr)
 {
-    save_Record( record_ptr, stdout );
+    if ( record_ptr->rating == 0 )
+    {
+        printf( "%d: %s u %s\n", record_ptr->ID,
+                record_ptr->medium, record_ptr->title );
+    }
+    else
+    {
+        printf( "%d: %s %d %s\n",  record_ptr->ID, record_ptr->medium,
+                record_ptr->rating, record_ptr->title );
+    }
 }
 
 void save_Record(const struct Record* record_ptr, FILE* outfile)
 {
-    
-    if ( outfile == stdout && record_ptr->rating == 0 )
-    {
-        fprintf( outfile, "%d: %s u %s\n", record_ptr->ID,
-               record_ptr->medium, record_ptr->title );
-    }
-    else
-    {
-        fprintf( outfile, "%d: %s %d %s\n",  record_ptr->ID, record_ptr->medium,
+
+    fprintf( outfile, "%d %s %d %s\n",  record_ptr->ID, record_ptr->medium,
                record_ptr->rating, record_ptr->title );
-    }
 }
 
 void reset_Record_ID_counter(void)
@@ -99,14 +101,14 @@ void reset_Record_ID_counter(void)
 
 struct Record* load_Record(FILE* infile)
 {
-    char c;
     struct Record* new_record;
     int ID, rating;
     char medium[ MEDIUM_MAX_SIZE ];
-    char title[ TITLE_MAX_BUFF_SIZE ];
+    char title [ TITLE_MAX_BUFF_SIZE ];
     
-    if ( fscanf( infile, "%d %s%c%d",
-                &ID, medium, &c, &rating ) != 4 )
+    /* include buffer gaurds */
+    if ( fscanf( infile, "%d %s %d",
+                &ID, medium, &rating ) != 3 )
     {
         /* throw an error */
         return NULL;
@@ -116,6 +118,8 @@ struct Record* load_Record(FILE* infile)
         /* return NULL;*/
     }
     
+    /* make sure this isnt segfaulting */
+    remove_white_space( title );
     
     new_record = create_Record( medium, title );
     new_record->rating = rating;

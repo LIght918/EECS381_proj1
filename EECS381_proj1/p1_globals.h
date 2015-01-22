@@ -15,6 +15,16 @@
 #define FILENAME_MAX_SIZE 31
 #define TITLE_MAX_BUFF_SIZE 64
 
+/* array sizes */
+#define NAME_ARRAY_SIZE NAME_MAX_SIZE + 1
+#define MEDIUM_ARRAY_SIZE MEDIUM_MAX_SIZE + 1
+#define FILENAME_ARRAY_SIZE FILENAME_MAX_SIZE + 1
+#define TITLE_ARRAY_SIZE TITLE_MAX_BUFF_SIZE + 1
+
+/* usefull macros */
+#define STRINGIFYHELP(x) #x
+#define STRINGIFY( x ) STRINGFYHELPER( x )
+#define SAFESCANF ( array_name ) scanf( "%" STRINGFY( MAXLEN ), "s", array_name )
 
 
 /* Do I need this one? */ 
