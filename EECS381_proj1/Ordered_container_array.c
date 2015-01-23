@@ -4,10 +4,8 @@ Remove this comment and complete this file with all necessary code.
 */
 
 #include "Ordered_container.h"
-
 #include <stdlib.h>
-#define NDEBUG
-#include <assert.h>
+#include <assert.h> /* TODO #DEFINE NDEBUG */
 
 #define DEFAULT_ALLOCATION 3
 

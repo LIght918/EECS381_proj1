@@ -7,8 +7,7 @@
 */
 
 #include "Record.h"
-#include "Utility.h"
-#include "p1_globals.h" /* holds the macros */
+#include "Utility.h"/* holds the macros */
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -39,11 +38,9 @@ struct Record* create_Record(const char* medium, const char* title)
     
     new_Record->rating = 0;
     
-    new_Record->title = malloc( sizeof( char ) * strlen( title ) );
-    strcpy( new_Record->title, title );
+    new_Record->title = alloc_and_copy( title );
     
-    new_Record->medium = malloc( sizeof( char ) * strlen( medium ) );
-    strcpy( new_Record->medium, medium );
+    new_Record->medium = alloc_and_copy( title ); 
     
     return new_Record;
 }
@@ -106,7 +103,7 @@ struct Record* load_Record(FILE* infile)
     char medium[ MEDIUM_MAX_SIZE ];
     char title [ TITLE_MAX_BUFF_SIZE ];
     
-    /* include buffer gaurds */
+    /* TODO include buffer gaurds */
     if ( fscanf( infile, "%d %s %d",
                 &ID, medium, &rating ) != 3 )
     {
@@ -124,6 +121,7 @@ struct Record* load_Record(FILE* infile)
     new_record = create_Record( medium, title );
     new_record->rating = rating;
     
+    /* for debug only TODO remove */
     print_Record( new_record ); 
     
     return new_record;

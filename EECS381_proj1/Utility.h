@@ -11,6 +11,24 @@
 
 #include <stdio.h>
 
+/* size limits */
+#define NAME_MAX_SIZE 15
+#define MEDIUM_MAX_SIZE 7
+#define FILENAME_MAX_SIZE 31
+#define TITLE_MAX_BUFF_SIZE 64
+
+/* array sizes */
+#define NAME_ARRAY_SIZE      NAME_MAX_SIZE + 1
+#define MEDIUM_ARRAY_SIZE    MEDIUM_MAX_SIZE + 1
+#define FILENAME_ARRAY_SIZE  FILENAME_MAX_SIZE + 1
+#define TITLE_ARRAY_SIZE     TITLE_MAX_BUFF_SIZE + 1
+
+/* usefull macros */
+#define STRINGIFYHELP(x) #x
+#define STRINGIFY( x ) STRINGFYHELPER( x )
+#define SAFESCANF ( array_name ) scanf( "%" STRINGFY( MAXLEN ), "s", array_name )
+
+
 /* returns true if the char c is a space a newline or a tab
  false if otherwize */
 int is_white_space( char c );
@@ -24,5 +42,17 @@ int get_title( FILE* infile, char* title);
 
 /* local version of strcpy */ 
 void str_cpy(char *dst, const char *src);
+
+/* uses strcmp on the title of each record and returns the value */
+int comp_Record_by_title( const void* left, const void* right );
+
+/* uses < on the ID values of each records */
+int comp_Record_by_ID( const void* left, const void* right );
+
+/* uses strcmp on the name of each Collection and returns the value */
+int comp_Collection_by_name( const void* left, const void* right );
+
+/* allocate memory and copy the src string to it */ 
+char* alloc_and_copy( const char* src );
 
 #endif /* defined(__EECS381_proj1__Utility__) */

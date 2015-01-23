@@ -8,7 +8,6 @@
 
 #include "Collection.h"
 #include "Ordered_container.h"
-#include "p1_globals.h"
 #include "Utility.h"
 #include "Record.h"
 #include <stdlib.h>
@@ -23,8 +22,7 @@ struct Collection {
     struct Ordered_container* members;
 };
 
-/* uses strcmp on the title of each record and returns the value */
-static int comp_Record( const void* left, const void* right );
+
 /* function prints out the title to the outfile and a newline */
 static void print_Record_title( struct Record* rec, FILE* outfile );
 
@@ -33,11 +31,12 @@ struct Collection* create_Collection(const char* name)
     struct Collection* new_collection = malloc( sizeof( struct Collection ) );
     
     /* alloc mem for name and copy it over */
-    new_collection->name = malloc( sizeof(char) * strlen( name ) );
-    strcpy( new_collection->name, name);
+    new_collection->name = alloc_and_copy( name ); 
+    
+
     
     /* use strcpy as the comp func */
-    new_collection->members = OC_create_container( comp_Record );
+    new_collection->members = OC_create_container( comp_Record_by_title );
     
     return new_collection;
 }
@@ -94,6 +93,16 @@ int remove_Collection_member(struct Collection* collection_ptr, const struct Rec
 
 void print_Collection(const struct Collection* collection_ptr)
 {
+    printf( "Collection %s contains:", collection_ptr->name );
+    
+    if ( OC_empty( collection_ptr->members ) )
+    {
+        /* if empty print none */ 
+        printf(" None" );
+    }
+    
+    printf("\n" );
+    
     OC_apply( collection_ptr->members, ( void(*)( void * ))print_Record );
 }
 
@@ -135,18 +144,13 @@ struct Collection* load_Collection(FILE* input_file, const struct Ordered_contai
         OC_insert( new_collection->members, cur_record );
     }
     
-    
-    return NULL;
+    return new_collection;
 }
 
 
 /* Helper Functions */
 
-static int comp_Record( const void* left, const void* right )
-{
-    return strcmp( get_Record_title((struct Record* )left),
-                   get_Record_title((struct Record* )right) );
-}
+
 
 static void print_Record_title( struct Record* rec, FILE* outfile )
 {

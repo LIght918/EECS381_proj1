@@ -7,6 +7,8 @@
 */
 
 #include "Utility.h"
+#include "Record.h"
+#include "Collection.h"
 #include "p1_globals.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -106,3 +108,31 @@ void str_cpy(char *dst, const char* src )
     }
     *dst = '\0';
 }
+
+int comp_Record_by_title( const void* left, const void* right )
+{
+    return strcmp( get_Record_title((struct Record* )left),
+                   get_Record_title((struct Record* )right) );
+}
+
+int comp_Record_by_ID( const void* left, const void* right )
+{
+    return get_Record_ID( (struct Record* )left ) < get_Record_ID( (struct Record* )right );
+}
+
+int comp_Collection_by_name( const void* left, const void* right )
+{
+    return strcmp( get_Collection_name( (struct Collection* )left),
+                   get_Collection_name( (struct Collection* )right ));
+}
+
+char* alloc_and_copy( const char* src )
+{
+    int length = (int)strlen( src );
+    char* new_str = malloc( sizeof(char) * length );
+    strcpy( new_str, src );
+    g_string_memory += length ;
+    
+    return new_str;
+}
+
