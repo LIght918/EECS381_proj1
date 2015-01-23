@@ -150,8 +150,6 @@ struct Collection* load_Collection(FILE* input_file, const struct Ordered_contai
 
 /* Helper Functions */
 
-
-
 static void print_Record_title( struct Record* rec, FILE* outfile )
 {
     /* function prints out the title to the outfile and a newline */

@@ -4,39 +4,61 @@
 #include "Utility.h"
 #include "Record.h"
 #include "p1_globals.h"
+#include <assert.h>
 
 /* print the unrecognized command error */
 static void error_unrecognized_command( void );
-static struct Record* get_record( struct Ordered_container* c_ptr , void* data_ptr );
-static void find_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID );
+static void error_title_read_falure( void );
+
+static void find_record_print( struct Ordered_container* lib_title, struct Ordered_container* lib_ID );
 static void print_allocation( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog);
+static void add_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID );
+static void delete_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID );
+static void* find_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID );
+/* Helper Functions */
+
+/* check if there is already something in the OC with that name and adds it if not
+   returns 0 if add nonzero if not */
+static int  check_dup_add( struct Ordered_container* c_ptr, void* data_ptr );
+/* returns the Record assosiated with the title or ID  */
+static void* get_record( struct Ordered_container* c_ptr , void* data_ptr );
+static char get_command_char( void );
+/* reads in the medium and title from stdin returns 0 if sucsessful nonzero if not */
+static int get_medium_and_title( char* medium, char* title );
 
 int main(void)
 {
     struct Ordered_container* lib_title = OC_create_container( comp_Record_by_title );
     struct Ordered_container* lib_ID    = OC_create_container( comp_Record_by_ID );
     struct Ordered_container* catalog   = OC_create_container( comp_Collection_by_name );
+    int i;
     
-    char first_c, second_c = '\0';
+    /*char first_c, second_c = '\0';
+    char buffer[ TITLE_ARRAY_SIZE ];*/
+    char command[ 3 ];
+    
+    /* init the command string */
+    command[ 2 ] = '\0';
     
     for ( ; ; )
     {
         printf( "\nEnter command: " );
-        if ( ( ( first_c = getchar() ) <= 0 ) || ( ( second_c = getchar() ) <= 0 ) )
+        
+        for ( i = 0 ; i < 2; ++i)
         {
-            /* what error checking TODO */
-            /* what else to clean up */
-            continue;
+            command[ i ] = get_command_char();
         }
-        printf( "%c %c", first_c, second_c );
-        switch ( first_c )
+        
+        printf( "%s\n", command );
+        
+        switch ( command[ 0 ] )
         {
             case 'f' :/* find (records only)*/
                 
-                switch ( second_c )
+                switch ( command[ 1 ] )
                 {
                     case 'r' :
-                        find_record( lib_title, lib_ID );
+                        find_record_print( lib_title, lib_ID );
                         break;
                     default:
                         error_unrecognized_command();
@@ -44,7 +66,7 @@ int main(void)
                 }
                 break;
             case 'p' : /* print */
-                switch ( second_c ) {
+                switch ( command[ 1 ] ) {
                     case 'r' :
                         
                         break;
@@ -76,15 +98,85 @@ int main(void)
                 
                 break;
             case 'a' : /* add */
-                
-                
+                switch ( command[ 1 ] ) {
+                    case 'r' :
+                        add_record( lib_title, lib_ID );
+                        break;
+                    case 'c':
+                        
+                        break;
+                    case 'm':
+                        
+                        break;
+                    case 'L':
+                        
+                        break;
+                    case 'C':
+                        
+                        break;
+                    case 'A':
+                        
+                        break;
+                    case 'a': /* allocation */
+                        /* throw error */
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case 'd': /* delete */
-                
-                
+                switch ( command[ 1 ] ) {
+                    case 'r' :
+                        delete_record( lib_title, lib_ID );
+                        break;
+                    case 'c':
+                        
+                        break;
+                    case 'm':
+                        
+                        break;
+                    case 'L':
+                        
+                        break;
+                    case 'C':
+                        
+                        break;
+                    case 'A':
+                        
+                        break;
+                    case 'a': /* allocation */
+                        /* throw error */
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case 'c': /* clear */
-                
+                switch ( command[ 1 ] ) {
+                    case 'r' :
+                        /* can you clear a record */
+                        break;
+                    case 'c':
+                        
+                        break;
+                    case 'm':
+                        
+                        break;
+                    case 'L':
+                        
+                        break;
+                    case 'C':
+                        
+                        break;
+                    case 'A':
+                        
+                        break;
+                    case 'a': /* allocation */
+                        /* throw error */
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case 's': /* save */
                 
@@ -94,6 +186,7 @@ int main(void)
                 break;
             default:
                 /* throw error for bad input */
+                printf("first letter not recognized\n");
                 error_unrecognized_command();
                 break;
         }
@@ -109,48 +202,29 @@ static void error_unrecognized_command( void )
     printf( "Unrecognized command!\n" );
 }
 
-static struct Record* get_record( struct Ordered_container* c_ptr , void* data_ptr )
+static void error_title_read_falure( void )
+{
+    printf( "Could not read a title!\n" );
+}
+
+static void* get_record( struct Ordered_container* c_ptr , void* data_ptr )
 {
     void* node_ptr = OC_find_item( c_ptr, data_ptr );
-    return ( struct Record* ) OC_get_data_ptr( node_ptr );
+    return OC_get_data_ptr( node_ptr );
 }
 
 
-static void find_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID )
+static void find_record_print( struct Ordered_container* lib_title, struct Ordered_container* lib_ID )
 {
-    int ID;
-    char title[ TITLE_ARRAY_SIZE ];
-    struct Record* cur_node = NULL;
+    struct Record* rec;
+    void* cur_node;
     
-    /* check to see if the surch is of type int */
-    if ( scanf( "%d", &ID ) == 1 )
+    /* attempt to find the record and print it if it exsists */
+    if ( (cur_node = find_record( lib_title, lib_ID )) != NULL   )
     {
-        cur_node = get_record( lib_ID, &ID );
-        if ( cur_node == NULL )
-        {
-            /* if it wasn't found throw an error and exit */
-            printf( "No record with that title!\n" );
-            return;
-        }
+        rec = OC_get_data_ptr( cur_node );
+        print_Record( rec );
     }
-    else if ( get_title( stdin, title ) )
-    {
-        cur_node = get_record( lib_ID, title );
-        if ( cur_node == NULL ) {
-            /* if it wasn't found throw an error and exit */
-            printf( "No record with that ID!\n" );
-            return;
-        }
-    }
-    else
-    {
-        /* throw error */
-        /* TODO find what error message to throw */
-        
-        return;
-    }
-    
-    print_Record( cur_node );
 }
 
 static void print_allocation( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog)
@@ -162,4 +236,113 @@ static void print_allocation( struct Ordered_container* lib_title, struct Ordere
     printf( "Container items in use: %d\n", g_Container_items_in_use );
     printf( "Container items allocated: %d\n", g_Container_items_allocated );
     printf( "C-strings: %d bytes total\n", g_Container_count );
+}
+
+static void add_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID )
+{
+    
+
+    char title[ TITLE_ARRAY_SIZE ];
+    char medium[ MEDIUM_ARRAY_SIZE ];
+    struct Record* new_rec;
+    
+    /* read the record in from the command line */
+    if ( !get_medium_and_title( medium, title ) )
+    {
+        error_title_read_falure();
+        return;
+    }
+    
+    printf( "Medium: %s\nTitle: %s\n", medium, title );
+    
+    if ( OC_find_item( lib_title, title ) != NULL )
+    {
+        printf( "Library already has a record with this title!\n" );
+    }
+    else
+    {
+        new_rec = create_Record(medium, title );
+        OC_insert( lib_title, new_rec );
+        OC_insert( lib_ID, new_rec );
+    }
+}
+
+static int  check_dup_add( struct Ordered_container* c_ptr, void* data_ptr )
+{
+    /* need to imp TODO */
+    /* assert until finished */
+    assert( 0 );
+    
+    return 0;
+}
+
+static void delete_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID )
+{
+    void* node_to_remove = find_record( lib_title, lib_ID );
+    struct Record* rec_to_remove;
+    
+    rec_to_remove = OC_get_data_ptr( node_to_remove );
+    
+    OC_delete_item( lib_ID, node_to_remove );
+    OC_delete_item( lib_title, node_to_remove);
+    
+    /* clean up memory */
+    destroy_Record( rec_to_remove );
+}
+
+static void* find_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID )
+{
+    int ID;
+    char title[ TITLE_ARRAY_SIZE ];
+    void* cur_node = NULL;
+    
+    /* check to see if the surch is of type int */
+    if ( scanf( "%d", &ID ) == 1 )
+    {
+        /* cur_node = get_record( lib_ID, &ID ); */
+        cur_node = OC_find_item( lib_ID, &ID );
+        if ( cur_node == NULL )
+        {
+            /* if it wasn't found throw an error and exit */
+            printf( "No record with that title!\n" );
+        }
+    }
+    else if ( get_title( stdin, title ) )
+    {
+        /* cur_node = get_record( lib_ID, title ); */
+        cur_node = OC_find_item( lib_title, title );
+        if ( cur_node == NULL ) {
+            /* if it wasn't found throw an error and exit */
+            printf( "No record with that ID!\n" );
+        }
+    }
+    else
+    {
+        /* throw error */
+        /* TODO find what error message to throw */
+        assert( 0 );
+        return NULL;
+    }
+    /* if no errors occur then print the record and return */
+    return cur_node;
+}
+
+static char get_command_char( void )
+{
+    int c;
+    
+    /* load chars until we get one that it not white space 
+       and throw an error if we get a EOF */
+    while ( ( ( c = getchar() ) > 0 ) && is_white_space( c ) )
+        ;
+    
+    return c;
+}
+
+static int get_medium_and_title( char* medium, char* title )
+{
+    if ( scanf("%s ", medium) != 1 && !get_title( stdin, title ) ) {
+        return 1;
+    }
+    return 0; 
 }
