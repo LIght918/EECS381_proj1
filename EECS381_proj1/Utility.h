@@ -26,8 +26,6 @@
 /* usefull macros */
 #define STRINGIFYHELP(x) #x
 #define STRINGIFY( x ) STRINGFYHELPER( x )
-#define SAFESCANF ( array_name ) scanf( "%" STRINGFY( MAXLEN ), "s", array_name )
-
 
 /* returns true if the char c is a space a newline or a tab
  false if otherwize */
@@ -37,7 +35,7 @@ int is_white_space( char c );
 void remove_white_space( char* c_str );
 
 /* loads int a title from a file the c_str title is required to have enough space alloc
-    returns true if read success full, false if otherwize */
+    returns true if read successfull, false if otherwize */
 int get_title( FILE* infile, char* title);
 
 /* local version of strcpy */ 
@@ -54,5 +52,8 @@ int comp_Collection_by_name( const void* left, const void* right );
 
 /* allocate memory and copy the src string to it */ 
 char* alloc_and_copy( const char* src );
+
+/* clean up mememory and keep track of allocation */
+void free_string( char* src );
 
 #endif /* defined(__EECS381_proj1__Utility__) */

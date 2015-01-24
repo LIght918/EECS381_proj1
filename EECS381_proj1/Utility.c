@@ -15,8 +15,6 @@
 #include <string.h>
 #include <assert.h>
 
-#define MAX_STRING_LENGTH 100
-
 /* removes redundent white space from the given string */
 void remove_white_space( char* c_str )
 {
@@ -24,14 +22,13 @@ void remove_white_space( char* c_str )
     int i = 0;
     char* front_c_str = c_str;
     int last_char_was_white = 0;
-    char str_copy[ MAX_STRING_LENGTH ];
+    char str_copy[ TITLE_ARRAY_SIZE ];
     
+    /* trim all the leading white space */
     while ( is_white_space( *c_str )) 
     {
         c_str++;
     }
-    
-    printf( "%s\n", c_str );
     
     while ( *c_str != '\0' )
     {
@@ -50,18 +47,13 @@ void remove_white_space( char* c_str )
         c_str++;
     }
     
-    printf("i: %i\n", i );
-    while ( is_white_space( str_copy[ --i ] )) {
-        ;
-    }
+    /* trim all the trailing white space */
+    while ( is_white_space( str_copy[ --i ] )) { ; }
     
     str_copy[ ++i ] = '\0';
-    printf( "%s\n", str_copy );
     
-    /* why whould this give a seg fault */
+    /* copy the mem back over into the starting location */
     str_cpy( front_c_str, (char * )str_copy );
-    
-    printf( "%s\n", str_copy );
 }
 
 /* returns true if the char c is a space a newline or a tab 
@@ -75,25 +67,10 @@ int is_white_space( char c )
  returns true if read success full, false if otherwize */
 int get_title( FILE* infile, char* title)
 {
-    int temp;
-    int i = 0;
-    do {
-        temp = fgetc( infile );
-        *title++ = temp;
-        if ( i++ >= TITLE_MAX_BUFF_SIZE )
-        {
-            /* buffer overflow so throw an error */
-            return 0;
-        }
-        /* read in will temp is not a end line or EOF  */
-        /* should an error be throw in EOF reached? */ 
-    } while ( temp != '\n' && temp > 0 ) ;
     
-    /* clean up the garbage char that was put in on the 
-     last iteration through the loop and give it the null terminator */
-    *(--title) = '\0';
-    
-    return 1;
+    int val = !fgets( title, TITLE_ARRAY_SIZE, infile ) ;
+    remove_white_space( title );
+    return val;
 }
 
 void str_cpy(char *dst, const char* src )
@@ -111,8 +88,8 @@ void str_cpy(char *dst, const char* src )
 
 int comp_Record_by_title( const void* left, const void* right )
 {
-    return strcmp( get_Record_title((struct Record* )left),
-                   get_Record_title((struct Record* )right) );
+    return strcmp( get_Record_title( (struct Record* )left),
+                   get_Record_title( (struct Record* )right) );
 }
 
 int comp_Record_by_ID( const void* left, const void* right )
@@ -130,9 +107,22 @@ char* alloc_and_copy( const char* src )
 {
     int length = (int)strlen( src );
     char* new_str = malloc( sizeof(char) * length );
+    
+    if ( !new_str )
+    {
+        /* if falure of allocation return NULL */
+        return NULL;
+    }
     strcpy( new_str, src );
     g_string_memory += length ;
     
     return new_str;
 }
+
+void free_string( char* src )
+{
+    g_string_memory -= (int)strlen( src );
+    free( src );
+}
+
 

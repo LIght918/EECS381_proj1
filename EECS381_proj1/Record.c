@@ -35,11 +35,8 @@ struct Record* create_Record(const char* medium, const char* title)
     struct Record* new_Record = malloc( sizeof( struct Record ) );
     
     new_Record->ID = Record_ID_counter++;
-    
     new_Record->rating = 0;
-    
     new_Record->title = alloc_and_copy( title );
-    
     new_Record->medium = alloc_and_copy( title ); 
     
     return new_Record;
@@ -48,8 +45,8 @@ struct Record* create_Record(const char* medium, const char* title)
 void destroy_Record(struct Record* record_ptr)
 {
     assert( record_ptr );
-    free( record_ptr->title );
-    free( record_ptr->medium);
+    free_string( record_ptr->title );
+    free_string( record_ptr->medium);
     free( record_ptr );
 }
 

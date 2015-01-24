@@ -44,7 +44,7 @@ struct Collection* create_Collection(const char* name)
 
 void destroy_Collection(struct Collection* collection_ptr)
 {
-    free( collection_ptr->name );
+    free_string( collection_ptr->name );
     OC_destroy_container( collection_ptr->members );
     free( collection_ptr );
 }
