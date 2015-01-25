@@ -221,7 +221,7 @@ int main(void)
 
 static void print_error( enum error err  )
 {
-    clear_line();
+    
     printf( "ERROR" ); 
     
     /*"Unrecognized command!\n"
@@ -242,6 +242,7 @@ static void print_error( enum error err  )
     
     switch ( err ) {
         case COMMAND:
+            clear_line();
             fprintf( stderr, "Unrecognized command!\n");
             break;
         case DUPLICATE_REC:
@@ -296,7 +297,6 @@ static void clear_line( void )
 {
     char buffp[ TITLE_ARRAY_SIZE ];
     fgets( buffp , TITLE_MAX_BUFF_SIZE, stdin );
-    printf( "%s\n", buffp );
 }
 
 
@@ -352,7 +352,7 @@ static void add_record( struct Ordered_container* lib_title, struct Ordered_cont
     char medium[ MEDIUM_ARRAY_SIZE ];
     struct Record* new_rec;
     
-    printf( "why are you waiting " );
+
     /* read the record in from the command line */
     if ( !get_medium_and_title( medium, title ) )
     {
