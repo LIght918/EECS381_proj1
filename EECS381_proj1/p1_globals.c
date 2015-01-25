@@ -14,6 +14,6 @@ int g_Container_count = 0 ;		/* number of Ordered_containers currently allocated
 int g_Container_items_in_use = 0 ;	/* number of Ordered_container items currently in use */
 int g_Container_items_allocated = 0 ;	/* number of Ordered_container items currently allocated */
 
-char* name_f_string = 0;
+char* name_f_string = 0; /*TODO init these */ 
 char* medium_f_string = 0;
 char* filename_f_string = 0;

@@ -46,6 +46,9 @@ int comp_Record_by_ID( const void* left, const void* right );
 /* compares a record to a title returns ture if equal */ 
 int comp_Record_to_title(const void* arg_ptr, const void* data_ptr);
 
+/* compars a record to a ID, int value returns true if equal */
+int comp_Record_to_ID( const void* arg_ptr, const void* data_ptr );
+
 /* uses strcmp on the name of each Collection and returns the value */
 int comp_Collection_by_name( const void* left, const void* right );
 

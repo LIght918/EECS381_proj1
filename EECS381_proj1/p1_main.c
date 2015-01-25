@@ -1,14 +1,15 @@
-#include <stdlib.h>
-#include <stdio.h>
+#include "Collection.h"
 #include "Ordered_container.h"
 #include "Utility.h"
 #include "Record.h"
 #include "p1_globals.h"
 #include <assert.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 
-
-enum error { COMMAND,
+enum error {
+    COMMAND,
     DUPLICATE_REC,
     DUPLICATE_COLL,
     IN_COLL,
@@ -22,32 +23,36 @@ enum error { COMMAND,
     READ_INT,
     RATING_RANGE,
     FILE_OPEN,
-    INVAL_DATA };
+    INVAL_DATA,
+    ASSERT
+};
 
 /* print the unrecognized command error */
 static void print_error( enum error err  );
 
-static void find_record( struct Ordered_container* lib_title );
+static void find_record_print( struct Ordered_container* lib_title );
 static void print_allocation( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog);
 static void add_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID );
-static void delete_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID );
-
-
+static void delete_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog);
+static void print_record( struct Ordered_container* lib_ID );
+static void print_lib( struct Ordered_container* lib_title );
+static void print_catalog( struct Ordered_container* catalog);
 /* Helper Functions */
 
 /* check if there is already something in the OC with that name and adds it if not
    returns 0 if add nonzero if not */
 static int  check_dup_add( struct Ordered_container* c_ptr, void* data_ptr );
-/* returns the Record assosiated with the title or ID  */
-static void* get_record( struct Ordered_container* c_ptr , void* data_ptr );
 static char get_command_char( void );
 /* reads in the medium and title from stdin returns 0 if sucsessful nonzero if not */
 static int get_medium_and_title( char* medium, char* title );
 /* on error clears the rest of the line and throws it away */
 static void clear_line( void );
 
-
-
+static void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr );
+/* print the record with that is equal to the data_prt */
+static void print_rec( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err  );
+static void find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err );
+int is_rec_in_catalog( void* data_ptr, void* arg_ptr);
     
     
 
@@ -82,7 +87,7 @@ int main(void)
                 switch ( command[ 1 ] )
                 {
                     case 'r' :
-                        find_record( lib_title );
+                        find_record_print( lib_title );
                         break;
                     default:
                         print_error( COMMAND );
@@ -92,27 +97,19 @@ int main(void)
             case 'p' : /* print */
                 switch ( command[ 1 ] ) {
                     case 'r' :
-                        
-                        break;
-                    case 'c':
-                        
-                        break;
-                    case 'm':
-                        
+                        print_record( lib_ID );
                         break;
                     case 'L':
-                        
+                        print_lib( lib_title );
                         break;
                     case 'C':
-                        
-                        break;
-                    case 'A':
-                        
+                        print_catalog( catalog );
                         break;
                     case 'a': /* allocation */
                         print_allocation( lib_title, lib_ID, catalog );
                         break;
                     default:
+                        print_error( COMMAND );
                         break;
                 }
                 
@@ -143,6 +140,7 @@ int main(void)
                         break;
                     case 'a': /* allocation */
                         /* throw error */
+                        print_error( COMMAND );
                         break;
                     default:
                         break;
@@ -151,7 +149,7 @@ int main(void)
             case 'd': /* delete */
                 switch ( command[ 1 ] ) {
                     case 'r' :
-                        delete_record( lib_title, lib_ID );
+                        delete_record( lib_title, lib_ID, catalog );
                         break;
                     case 'c':
                         
@@ -172,6 +170,7 @@ int main(void)
                         /* throw error */
                         break;
                     default:
+                        print_error( COMMAND );
                         break;
                 }
                 break;
@@ -199,6 +198,7 @@ int main(void)
                         /* throw error */
                         break;
                     default:
+                        print_error( COMMAND );
                         break;
                 }
                 break;
@@ -208,6 +208,16 @@ int main(void)
             case 'r': /* restore */
                 
                 break;
+            case 'q':
+                switch ( command[ 1 ] ) {
+                    case 'q':
+                        /* clean up memory */
+                        return 0;
+                        break;
+                    default:
+                        print_error( COMMAND );
+                        break;
+                }
             default:
                 /* throw error for bad input */
                 print_error( COMMAND );
@@ -221,9 +231,6 @@ int main(void)
 
 static void print_error( enum error err  )
 {
-    
-    printf( "ERROR" ); 
-    
     /*"Unrecognized command!\n"
     "Library already has a record with this title!\n"
     "Catalog already has a collection with this name!\n"
@@ -276,6 +283,7 @@ static void print_error( enum error err  )
             fprintf( stderr,"Could not read a title!\n");
             break;
         case READ_INT:
+            clear_line();
             fprintf( stderr,"Could not read an integer value!\n");
             break;
         case RATING_RANGE:
@@ -287,6 +295,8 @@ static void print_error( enum error err  )
         case INVAL_DATA:
             fprintf( stderr,"Invalid data found in file!\n");
             break;
+        case ASSERT:
+            assert(0); /* should cascade on NDEBUG */ 
         default:
             fprintf( stderr, "Error Unknow\n" );
             break;
@@ -299,39 +309,76 @@ static void clear_line( void )
     fgets( buffp , TITLE_MAX_BUFF_SIZE, stdin );
 }
 
-
-/* TODO change this name */
-static void* get_record( struct Ordered_container* c_ptr , void* data_ptr )
+static void print_rec( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err  )
 {
-    void* node_ptr = OC_find_item( c_ptr, data_ptr );
-    if ( node_ptr == NULL )
-    {
-        return NULL;
-    }
-    return OC_get_data_ptr( node_ptr );
-}
-
-
-static void find_record( struct Ordered_container* lib_title )
-{
-    struct Record* rec;
-    char title[ TITLE_ARRAY_SIZE ];
+    struct Record* rec = get_data_ptr( c_ptr, fafp, data_ptr );
     
-    if( !get_title( stdin, title ) )
+    if ( rec == NULL )
     {
-        print_error( READ_TITLE );
+        print_error( err );
         return;
     }
     
-    rec = get_record( lib_title, title );
+    print_Record( rec );
+}
+
+static struct Record* find_record_by_title( struct Ordered_container* lib_title )
+{
+    char title[ TITLE_ARRAY_SIZE ];
+    struct Record* rec;
+    
+    if( get_title( stdin, title ) )
+    {
+        print_error( READ_TITLE );
+        return NULL;
+    }
+    
+    rec = get_data_ptr( lib_title, comp_Record_to_title, title );
     if ( rec == NULL )
     {
         print_error( NOT_FOUND_TITLE );
+    }
+    
+    return rec;
+}
+
+
+
+static void find_record_print( struct Ordered_container* lib_title )
+{
+    struct Record* rec = find_record_by_title( lib_title );
+    
+    /* if we find the record print it out */
+    if ( rec )
+    {
+        print_Record( rec );
+    }
+    
+}
+
+static void print_record( struct Ordered_container* lib_ID )
+{
+    int ID;
+    
+    if ( scanf("%d", &ID) != 1 )
+    {
+        print_error( READ_INT );
         return;
     }
     
-    print_Record( rec ); 
+    print_rec( lib_ID, comp_Record_to_ID, &ID, NOT_FOUND_ID );
+}
+
+static void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr )
+{
+    void* cur_node = OC_find_item_arg( c_ptr, data_ptr, fafp );
     
+    if ( cur_node == NULL )
+    {
+        return NULL;
+    }
+    
+    return OC_get_data_ptr( cur_node );
 }
 
 
@@ -343,7 +390,7 @@ static void print_allocation( struct Ordered_container* lib_title, struct Ordere
     printf( "Containers: %d\n", g_Container_count );
     printf( "Container items in use: %d\n", g_Container_items_in_use );
     printf( "Container items allocated: %d\n", g_Container_items_allocated );
-    printf( "C-strings: %d bytes total\n", g_Container_count );
+    printf( "C-strings: %d bytes total\n", g_string_memory );
 }
 
 static void add_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID )
@@ -359,7 +406,6 @@ static void add_record( struct Ordered_container* lib_title, struct Ordered_cont
         print_error( READ_TITLE );
         return;
     }
-    printf( "lets go"); 
     
     if ( OC_find_item_arg( lib_title, title , comp_Record_to_title ) != NULL )
     {
@@ -369,7 +415,6 @@ static void add_record( struct Ordered_container* lib_title, struct Ordered_cont
     else
     {
         new_rec = create_Record(medium, title );
-        print_Record( new_rec );
         OC_insert( lib_title, new_rec );
         OC_insert( lib_ID, new_rec );
     }
@@ -384,18 +429,66 @@ static int  check_dup_add( struct Ordered_container* c_ptr, void* data_ptr )
     return 0;
 }
 
-static void delete_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID )
+static void find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err )
 {
-    void* node_to_remove; /* = find_record( lib_title, lib_ID );*/
-    struct Record* rec_to_remove;
+    void* node = OC_find_item_arg( c_ptr, data_ptr, fafp );
     
-    rec_to_remove = OC_get_data_ptr( node_to_remove );
+    if ( node == NULL )
+    {
+        print_error( err );
+    }
     
-    OC_delete_item( lib_ID, node_to_remove );
-    OC_delete_item( lib_title, node_to_remove);
-    
-    /* clean up memory */
-    destroy_Record( rec_to_remove );
+    OC_delete_item( c_ptr, node );
+}
+
+int is_rec_in_catalog( void* data_ptr, void* arg_ptr)
+{
+    return is_Collection_member_present( (struct Collection*)data_ptr, arg_ptr );
+}
+
+
+
+static void delete_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog )
+{
+    struct Record* rec_to_remove = find_record_by_title( lib_title );
+    if ( rec_to_remove )
+    {
+        const char* title;
+        int ID ;
+        
+        /* TODO test this line */
+        if( OC_apply_if_arg( catalog, is_rec_in_catalog, rec_to_remove ) )
+        {
+            print_error( IN_COLL );
+            return;
+        }
+        
+        
+        ID = get_Record_ID( rec_to_remove );
+        title = get_Record_title( rec_to_remove );
+        
+        /* remove from both libs */
+        find_remove(lib_title, comp_Record_to_title, (void*)title, NOT_FOUND_TITLE );
+        find_remove(lib_ID, comp_Record_to_ID, &ID, ASSERT );
+        
+        destroy_Record( rec_to_remove );
+    }
+}
+
+
+static void print_lib( struct Ordered_container* lib_title )
+{
+    OC_apply( lib_title, (void (*)(void*))print_Record );
+}
+
+static void print_coll_names( void*  data_ptr )
+{
+    printf("%s\n", get_Collection_name(( (struct Collection*) data_ptr )));
+}
+
+static void print_catalog( struct Ordered_container* catalog)
+{
+    OC_apply(catalog, print_coll_names );
 }
 
 static char get_command_char( void )
@@ -409,6 +502,9 @@ static char get_command_char( void )
     
     return c;
 }
+
+
+
 
 static int get_medium_and_title( char* medium, char* title )
 {

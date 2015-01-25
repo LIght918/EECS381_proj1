@@ -37,9 +37,7 @@ struct Record* create_Record(const char* medium, const char* title)
     new_Record->ID = Record_ID_counter++;
     new_Record->rating = 0;
     new_Record->title = alloc_and_copy( title );
-    new_Record->medium = alloc_and_copy( medium ); 
-    
-    printf( "%s\n", new_Record->title ); 
+    new_Record->medium = alloc_and_copy( medium );
     
     return new_Record;
 }

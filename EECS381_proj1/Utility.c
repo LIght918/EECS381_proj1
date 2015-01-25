@@ -10,6 +10,7 @@
 #include "Record.h"
 #include "Collection.h"
 #include "p1_globals.h"
+#include "Ordered_container.h" /* TODO remove */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -105,6 +106,11 @@ int comp_Record_by_ID( const void* left, const void* right )
     return get_Record_ID( (struct Record* )left ) < get_Record_ID( (struct Record* )right );
 }
 
+int comp_Record_to_ID( const void* arg_ptr, const void* data_ptr )
+{
+    return ( get_Record_ID( (struct Record* )data_ptr ) -  *( (int*) arg_ptr ) );
+}
+
 int comp_Collection_by_name( const void* left, const void* right )
 {
     return strcmp( get_Collection_name( (struct Collection* )left),
@@ -130,7 +136,8 @@ char* alloc_and_copy( const char* src )
 
 void free_string( char* src )
 {
-    g_string_memory -= (int)strlen( src );
+    /* add one to deal with the null termiator */ 
+    g_string_memory -= (int)strlen( src ) + 1;
     free( src );
 }
 
