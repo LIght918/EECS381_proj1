@@ -25,7 +25,7 @@ CC = gcc
 LD = gcc
 
 # specify compile and link options
-CFLAGS = -c -std=c89 -pedantic-errors -Wmissing-prototypes -Wall -g
+CFLAGS = -c -std=c89 -pedantic-errors -Wmissing-prototypes -Wall
 LFLAGS = -Wall
 
 OBJS = p1_main.o Record.o Collection.o p1_globals.o Utility.o

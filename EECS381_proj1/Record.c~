@@ -39,7 +39,7 @@ struct Record* create_Record(const char* medium, const char* title)
     new_Record->title = alloc_and_copy( title );
     new_Record->medium = alloc_and_copy( medium ); 
     
-    printf( "%s\n", new_Record->title ); 
+    printf( new_Record->title ); 
     
     return new_Record;
 }
