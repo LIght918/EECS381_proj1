@@ -122,6 +122,12 @@ int comp_Collection_to_name(const void* arg_ptr, const void* data_ptr )
     return strcmp( arg_ptr, get_Collection_name( (struct Collection* ) data_ptr ) );
 }
 
+int is_Collection_not_empty( void* data_ptr )
+{
+    return !Collection_empty( ( struct Collection* ) data_ptr );
+}
+
+
 char* alloc_and_copy( const char* src )
 {
     int length = (int)strlen( src ) + 1 ;

@@ -50,8 +50,9 @@ static void print_allocation( struct Ordered_container* lib_title, struct Ordere
 static void apply_collection_func( struct Ordered_container* lib_ID, struct Ordered_container* catalog, Collection_fptr fp, char* action, enum error err );
 static void modify_rating( struct Ordered_container* lib_ID );
 
-
-
+static void clear_container( struct Ordered_container* c_ptr , OC_apply_fp_t destructor, char* output );
+static void clear_library( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog );
+static void clear_all( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog );
 
 /* Helper Functions */
 
@@ -197,7 +198,7 @@ int main(void)
                         
                         break;
                     case 'A':
-                        
+                        clear_all( lib_title, lib_ID, catalog );
                         break;
                     case 'a': /* allocation */
                         /* throw error */
@@ -220,10 +221,10 @@ int main(void)
                         
                         break;
                     case 'L':
-                        
+                        clear_library( lib_title, lib_ID, catalog );
                         break;
                     case 'C':
-                        
+                        clear_container( catalog, ( void(*)(void*) )destroy_Collection, "All collections deleted\n" );
                         break;
                     case 'A':
                         
@@ -677,4 +678,34 @@ static void apply_collection_func( struct Ordered_container* lib_ID, struct Orde
             
         }
     }
+}
+
+static void clear_container( struct Ordered_container* c_ptr , OC_apply_fp_t destructor, char* output )
+{
+    OC_apply( c_ptr, destructor );
+    OC_clear( c_ptr );
+    printf( "%s", output );
+}
+
+
+
+static void clear_library( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog )
+{
+    if ( OC_apply_if( catalog, is_Collection_not_empty ) )
+    {
+        print_error( CLEAR_COLL );
+    }
+    else
+    {
+        clear_container(lib_ID, ( void(*)(void*) )destroy_Record, "") ;
+        clear_container(lib_title, ( void(*)(void*) )destroy_Record, "All records deleted\n");
+    }
+}
+
+
+static void clear_all( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog )
+{
+    clear_container( catalog, ( void(*)(void*) )destroy_Collection, "" );
+    clear_container(lib_ID, ( void(*)(void*) )destroy_Record, "") ;
+    clear_container(lib_title, ( void(*)(void*) )destroy_Record, "All data deleted\n" );
 }

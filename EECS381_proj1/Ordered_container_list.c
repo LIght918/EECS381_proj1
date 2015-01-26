@@ -279,7 +279,10 @@ int OC_apply_if(const struct Ordered_container* c_ptr, OC_apply_if_fp_t afp)
 
 	while ( cur_node != NULL )
 	{
-		fp_t_value = afp( cur_node->data_ptr ); 
+        
+		fp_t_value = afp( cur_node->data_ptr );
+        printf( "%d\n", fp_t_value );
+        
 		if ( fp_t_value != 0 )
 		{
 			return fp_t_value;
