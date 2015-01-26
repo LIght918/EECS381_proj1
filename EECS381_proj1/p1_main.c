@@ -44,11 +44,10 @@ static void delete_collection( struct Ordered_container* catalog );
 
 static void print_collection_main( struct Ordered_container* catalog );
 static void print_record( struct Ordered_container* lib_ID );
-static void print_containter( struct Ordered_container* c_ptr, char* type, OC_apply_fp_t fp );
+static void print_containter( struct Ordered_container* c_ptr, char* type, char* holds, OC_apply_fp_t fp );
 static void print_allocation( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog);
 
-static void apply_collection_func( struct Ordered_container* lib_ID, struct Ordered_container* catalog, Collection_fptr fp );
-
+static void apply_collection_func( struct Ordered_container* lib_ID, struct Ordered_container* catalog, Collection_fptr fp, char* action, enum error err );
 static void modify_rating( struct Ordered_container* lib_ID );
 
 
@@ -120,11 +119,11 @@ int main(void)
                         break;
                     case 'L':
                         /*print_lib( lib_title );*/
-                        print_containter( lib_title, "Library", (void (*)(void*))print_Record );
+                        print_containter( lib_title, "Library", "records", (void (*)(void*))print_Record );
                         break;
                     case 'C':
                         /* print_catalog( catalog ); */
-                        print_containter( catalog, "Catalog", print_coll_names );
+                        print_containter( catalog, "Catalog", "collections", (void (*)(void*))print_Collection );
                         break;
                     case 'a': /* allocation */
                         print_allocation( lib_title, lib_ID, catalog );
@@ -160,7 +159,7 @@ int main(void)
                         add_coll( catalog );
                         break;
                     case 'm':
-                        apply_collection_func( lib_ID , catalog, add_Collection_member );
+                        apply_collection_func( lib_ID , catalog, add_Collection_member,  "added", IN_COLL );
                         break;
                     case 'L':
                         
@@ -189,7 +188,7 @@ int main(void)
                         delete_collection( catalog );
                         break;
                     case 'm':
-                         apply_collection_func( lib_ID , catalog, remove_Collection_member );
+                         apply_collection_func( lib_ID , catalog, remove_Collection_member, "deleted", NOT_IN_COLL );
                         break;
                     case 'L':
                         
@@ -437,7 +436,7 @@ static void* get_node(struct Ordered_container* c_ptr, OC_find_item_arg_fp_t faf
 static void print_allocation( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog)
 {
     printf( "Memory allocations:\n" );
-    printf( "Records: %d\n", OC_get_size( lib_title) + OC_get_size( lib_ID ) );
+    printf( "Records: %d\n", OC_get_size( lib_ID ) );
     printf( "Collections: %d\n", OC_get_size( catalog ) );
     printf( "Containers: %d\n", g_Container_count );
     printf( "Container items in use: %d\n", g_Container_items_in_use );
@@ -524,7 +523,7 @@ static void delete_record( struct Ordered_container* lib_title, struct Ordered_c
 
 
 
-static void print_containter( struct Ordered_container* c_ptr, char* type, OC_apply_fp_t fp )
+static void print_containter( struct Ordered_container* c_ptr, char* type, char* holds, OC_apply_fp_t fp )
 {
     if ( OC_empty( c_ptr ) )
     {
@@ -532,7 +531,7 @@ static void print_containter( struct Ordered_container* c_ptr, char* type, OC_ap
     }
     else
     {
-        printf( "%s contains %d records:\n", type, OC_get_size( c_ptr ) );
+        printf( "%s contains %d %s:\n", type, OC_get_size( c_ptr ), holds );
         OC_apply( c_ptr, fp );
     }
 }
@@ -655,7 +654,7 @@ static void modify_rating( struct Ordered_container* lib_ID )
 }
 
 
-static void apply_collection_func( struct Ordered_container* lib_ID, struct Ordered_container* catalog, Collection_fptr fp )
+static void apply_collection_func( struct Ordered_container* lib_ID, struct Ordered_container* catalog, Collection_fptr fp, char* action, enum error err )
 {
     int ID;
     struct Record* rec;
@@ -667,7 +666,15 @@ static void apply_collection_func( struct Ordered_container* lib_ID, struct Orde
         rec = get_data_ptr( lib_ID, comp_Record_to_ID, &ID, NOT_FOUND_ID );
         if ( rec )
         {
-            fp( coll, rec );
+            if ( !fp( coll, rec ) )
+            {
+                printf("Member %d %s %s\n", ID, get_Record_title( rec ), action );
+            }
+            else
+            {
+                print_error( err );
+            }
+            
         }
     }
 }

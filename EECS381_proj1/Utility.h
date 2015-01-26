@@ -61,8 +61,6 @@ int comp_Collection_by_name( const void* left, const void* right );
 /* uses strcmp on name and collection */
 int comp_Collection_to_name(const void* arg_ptr, const void* data_ptr );
 
-void print_coll_names( void*  data_ptr );
-
 /* allocate memory and copy the src string to it */
 char* alloc_and_copy( const char* src );
 

@@ -306,16 +306,16 @@ int OC_apply_if_arg(const struct Ordered_container* c_ptr, OC_apply_if_arg_fp_t 
 	struct LL_Node* cur_node = c_ptr->first;
 	int fp_t_value; /* holds the return value of the OC_apply_if_fp_t */
     
-    printf( "%d\n", c_ptr->size );
+    
     
 	while ( cur_node != NULL )
 	{
 		fp_t_value = afp( cur_node->data_ptr, arg_ptr );
-        printf( "%d\n", fp_t_value );
 		if ( fp_t_value != 0 )
 		{
 			return fp_t_value; 
 		}
+        cur_node = cur_node->next;
 	}
 
 	return 0; 

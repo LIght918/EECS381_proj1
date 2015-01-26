@@ -146,10 +146,5 @@ void free_string( char* src )
     free( src );
 }
 
-void print_coll_names( void*  data_ptr )
-{
-    printf("%s\n", get_Collection_name(( (struct Collection*) data_ptr )));
-}
-
 
 
