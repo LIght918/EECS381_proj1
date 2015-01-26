@@ -23,6 +23,12 @@
 #define FILENAME_ARRAY_SIZE  FILENAME_MAX_SIZE + 1
 #define TITLE_ARRAY_SIZE     TITLE_MAX_BUFF_SIZE + 1
 
+typedef int bool;
+#define true 1
+#define false 0
+
+#define MAX_RATING 5 
+
 /* returns true if the char c is a space a newline or a tab
  false if otherwize */
 int is_white_space( char c );
@@ -52,7 +58,12 @@ int comp_Record_to_ID( const void* arg_ptr, const void* data_ptr );
 /* uses strcmp on the name of each Collection and returns the value */
 int comp_Collection_by_name( const void* left, const void* right );
 
-/* allocate memory and copy the src string to it */ 
+/* uses strcmp on name and collection */
+int comp_Collection_to_name(const void* arg_ptr, const void* data_ptr );
+
+void print_coll_names( void*  data_ptr );
+
+/* allocate memory and copy the src string to it */
 char* alloc_and_copy( const char* src );
 
 /* clean up mememory and keep track of allocation */

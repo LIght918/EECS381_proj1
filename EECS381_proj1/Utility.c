@@ -117,6 +117,11 @@ int comp_Collection_by_name( const void* left, const void* right )
                    get_Collection_name( (struct Collection* )right ));
 }
 
+int comp_Collection_to_name(const void* arg_ptr, const void* data_ptr )
+{
+    return strcmp( arg_ptr, get_Collection_name( (struct Collection* ) data_ptr ) );
+}
+
 char* alloc_and_copy( const char* src )
 {
     int length = (int)strlen( src ) + 1 ;
@@ -141,6 +146,10 @@ void free_string( char* src )
     free( src );
 }
 
+void print_coll_names( void*  data_ptr )
+{
+    printf("%s\n", get_Collection_name(( (struct Collection*) data_ptr )));
+}
 
 
 

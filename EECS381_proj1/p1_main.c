@@ -27,34 +27,52 @@ enum error {
     ASSERT
 };
 
+
+typedef void* (*Node_or_Data)( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err ) ;
+typedef int (*Collection_fptr)(struct Collection* collection_ptr, const struct Record* record_ptr);
+
 /* print the unrecognized command error */
 static void print_error( enum error err  );
 
 static void find_record_print( struct Ordered_container* lib_title );
-static void print_allocation( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog);
+
 static void add_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID );
+static void add_coll( struct Ordered_container* catalog );
+
 static void delete_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog);
+static void delete_collection( struct Ordered_container* catalog );
+
+static void print_collection_main( struct Ordered_container* catalog );
 static void print_record( struct Ordered_container* lib_ID );
-static void print_lib( struct Ordered_container* lib_title );
-static void print_catalog( struct Ordered_container* catalog);
+static void print_containter( struct Ordered_container* c_ptr, char* type, OC_apply_fp_t fp );
+static void print_allocation( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog);
+
+static void apply_collection_func( struct Ordered_container* lib_ID, struct Ordered_container* catalog, Collection_fptr fp );
+
+static void modify_rating( struct Ordered_container* lib_ID );
+
+
+
+
 /* Helper Functions */
 
-/* check if there is already something in the OC with that name and adds it if not
-   returns 0 if add nonzero if not */
-static int  check_dup_add( struct Ordered_container* c_ptr, void* data_ptr );
 static char get_command_char( void );
 /* reads in the medium and title from stdin returns 0 if sucsessful nonzero if not */
 static int get_medium_and_title( char* medium, char* title );
 /* on error clears the rest of the line and throws it away */
 static void clear_line( void );
 
-static void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr );
+static void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err );
+static void* get_node(struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err );
 /* print the record with that is equal to the data_prt */
 static void print_rec( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err  );
 static void find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err );
-int is_rec_in_catalog( void* data_ptr, void* arg_ptr);
-    
-    
+static int is_rec_in_catalog( void* data_ptr, void* arg_ptr);
+
+static struct Collection* find_collection_by_name( struct Ordered_container* catalog, Node_or_Data fp );
+
+static int read_int( int* num );
+static void read_name( char* name );
 
 
 int main(void)
@@ -95,18 +113,24 @@ int main(void)
                 }
                 break;
             case 'p' : /* print */
-                switch ( command[ 1 ] ) {
+                switch ( command[ 1 ] )
+                {
                     case 'r' :
                         print_record( lib_ID );
                         break;
                     case 'L':
-                        print_lib( lib_title );
+                        /*print_lib( lib_title );*/
+                        print_containter( lib_title, "Library", (void (*)(void*))print_Record );
                         break;
                     case 'C':
-                        print_catalog( catalog );
+                        /* print_catalog( catalog ); */
+                        print_containter( catalog, "Catalog", print_coll_names );
                         break;
                     case 'a': /* allocation */
                         print_allocation( lib_title, lib_ID, catalog );
+                        break;
+                    case 'c':
+                        print_collection_main( catalog );
                         break;
                     default:
                         print_error( COMMAND );
@@ -115,19 +139,28 @@ int main(void)
                 
                 break;
             case 'm': /* modify (rating only) */
-                
+                switch ( command[ 1 ] )
+                {
+                    case 'r':
+                        modify_rating( lib_ID );
+                        break;
+                    default:
+                        print_error( COMMAND );
+                        break;
+                }
                 
                 break;
             case 'a' : /* add */
-                switch ( command[ 1 ] ) {
+                switch ( command[ 1 ] )
+                {
                     case 'r' :
                         add_record( lib_title, lib_ID );
                         break;
                     case 'c':
-                        
+                        add_coll( catalog );
                         break;
                     case 'm':
-                        
+                        apply_collection_func( lib_ID , catalog, add_Collection_member );
                         break;
                     case 'L':
                         
@@ -147,15 +180,16 @@ int main(void)
                 }
                 break;
             case 'd': /* delete */
-                switch ( command[ 1 ] ) {
+                switch ( command[ 1 ] )
+                {
                     case 'r' :
                         delete_record( lib_title, lib_ID, catalog );
                         break;
                     case 'c':
-                        
+                        delete_collection( catalog );
                         break;
                     case 'm':
-                        
+                         apply_collection_func( lib_ID , catalog, remove_Collection_member );
                         break;
                     case 'L':
                         
@@ -175,7 +209,8 @@ int main(void)
                 }
                 break;
             case 'c': /* clear */
-                switch ( command[ 1 ] ) {
+                switch ( command[ 1 ] )
+                {
                     case 'r' :
                         /* can you clear a record */
                         break;
@@ -209,7 +244,8 @@ int main(void)
                 
                 break;
             case 'q':
-                switch ( command[ 1 ] ) {
+                switch ( command[ 1 ] )
+                {
                     case 'q':
                         /* clean up memory */
                         return 0;
@@ -311,15 +347,12 @@ static void clear_line( void )
 
 static void print_rec( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err  )
 {
-    struct Record* rec = get_data_ptr( c_ptr, fafp, data_ptr );
+    struct Record* rec = get_data_ptr( c_ptr, fafp, data_ptr, err );
     
-    if ( rec == NULL )
+    if ( rec != NULL )
     {
-        print_error( err );
-        return;
+        print_Record( rec );
     }
-    
-    print_Record( rec );
 }
 
 static struct Record* find_record_by_title( struct Ordered_container* lib_title )
@@ -333,12 +366,7 @@ static struct Record* find_record_by_title( struct Ordered_container* lib_title 
         return NULL;
     }
     
-    rec = get_data_ptr( lib_title, comp_Record_to_title, title );
-    if ( rec == NULL )
-    {
-        print_error( NOT_FOUND_TITLE );
-    }
-    
+    rec = get_data_ptr( lib_title, comp_Record_to_title, title, NOT_FOUND_TITLE );
     return rec;
 }
 
@@ -356,29 +384,53 @@ static void find_record_print( struct Ordered_container* lib_title )
     
 }
 
+/* reads in a int and returns true if there was no error
+    if an error occures it prints a message and returns false */
+static int read_int( int* num )
+{
+    if ( scanf("%d", num ) != 1 )
+    {
+        print_error( READ_INT );
+        return false;
+    }
+    return true;
+}
+
+
 static void print_record( struct Ordered_container* lib_ID )
 {
     int ID;
     
-    if ( scanf("%d", &ID) != 1 )
+    if ( !read_int( &ID ) )
     {
-        print_error( READ_INT );
         return;
     }
     
     print_rec( lib_ID, comp_Record_to_ID, &ID, NOT_FOUND_ID );
 }
 
-static void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr )
+static void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err )
 {
-    void* cur_node = OC_find_item_arg( c_ptr, data_ptr, fafp );
-    
+    void* cur_node = get_node(c_ptr, fafp, data_ptr, err );
+
     if ( cur_node == NULL )
     {
         return NULL;
     }
     
     return OC_get_data_ptr( cur_node );
+}
+
+static void* get_node(struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err )
+{
+    void* cur_node = OC_find_item_arg( c_ptr, data_ptr, fafp );
+    
+    if ( cur_node == NULL )
+    {
+        print_error( err );
+    }
+    
+    return cur_node;
 }
 
 
@@ -417,16 +469,8 @@ static void add_record( struct Ordered_container* lib_title, struct Ordered_cont
         new_rec = create_Record(medium, title );
         OC_insert( lib_title, new_rec );
         OC_insert( lib_ID, new_rec );
+        printf( "Record %d added\n", get_Record_ID( new_rec ) );
     }
-}
-
-static int  check_dup_add( struct Ordered_container* c_ptr, void* data_ptr )
-{
-    /* need to imp TODO */
-    /* assert until finished */
-    assert( 0 );
-    
-    return 0;
 }
 
 static void find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err )
@@ -443,7 +487,7 @@ static void find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t 
 
 int is_rec_in_catalog( void* data_ptr, void* arg_ptr)
 {
-    return is_Collection_member_present( (struct Collection*)data_ptr, arg_ptr );
+    return is_Collection_member_present( ( struct Collection* )data_ptr, arg_ptr );
 }
 
 
@@ -451,6 +495,7 @@ int is_rec_in_catalog( void* data_ptr, void* arg_ptr)
 static void delete_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog )
 {
     struct Record* rec_to_remove = find_record_by_title( lib_title );
+    
     if ( rec_to_remove )
     {
         const char* title;
@@ -459,10 +504,9 @@ static void delete_record( struct Ordered_container* lib_title, struct Ordered_c
         /* TODO test this line */
         if( OC_apply_if_arg( catalog, is_rec_in_catalog, rec_to_remove ) )
         {
-            print_error( IN_COLL );
-            return;
+            print_error( IN_COLL ) ;
+            return ;
         }
-        
         
         ID = get_Record_ID( rec_to_remove );
         title = get_Record_title( rec_to_remove );
@@ -471,24 +515,26 @@ static void delete_record( struct Ordered_container* lib_title, struct Ordered_c
         find_remove(lib_title, comp_Record_to_title, (void*)title, NOT_FOUND_TITLE );
         find_remove(lib_ID, comp_Record_to_ID, &ID, ASSERT );
         
+        printf("Record %d %s deleted\n", ID, title );
+        
         destroy_Record( rec_to_remove );
     }
 }
 
 
-static void print_lib( struct Ordered_container* lib_title )
-{
-    OC_apply( lib_title, (void (*)(void*))print_Record );
-}
 
-static void print_coll_names( void*  data_ptr )
-{
-    printf("%s\n", get_Collection_name(( (struct Collection*) data_ptr )));
-}
 
-static void print_catalog( struct Ordered_container* catalog)
+static void print_containter( struct Ordered_container* c_ptr, char* type, OC_apply_fp_t fp )
 {
-    OC_apply(catalog, print_coll_names );
+    if ( OC_empty( c_ptr ) )
+    {
+        printf( "%s is empty\n", type );
+    }
+    else
+    {
+        printf( "%s contains %d records:\n", type, OC_get_size( c_ptr ) );
+        OC_apply( c_ptr, fp );
+    }
 }
 
 static char get_command_char( void )
@@ -515,3 +561,113 @@ static int get_medium_and_title( char* medium, char* title )
 }
 
 
+static void read_name( char* name )
+{
+    if (scanf( "%s", name ) != 1 )
+    {
+        /* there shouldn't be an error but
+         just to be safe */
+        assert( 0 );
+    }
+}
+
+static void add_coll( struct Ordered_container* catalog )
+{
+    
+    struct Collection* new_coll;
+    char name[ NAME_ARRAY_SIZE ];
+    
+    read_name( name );
+    
+    if ( OC_find_item_arg( catalog, name, comp_Collection_to_name ) != NULL )
+    {
+        print_error( IN_COLL );
+        return;
+    }
+    
+    new_coll = create_Collection( name );
+    
+    OC_insert( catalog, new_coll );
+    printf("Collection %s added\n", name );
+}
+
+static struct Collection* find_collection_by_name( struct Ordered_container* catalog, Node_or_Data fp )
+{
+    char name[ NAME_ARRAY_SIZE ];
+    
+    read_name( name );
+    
+    return fp( catalog, comp_Collection_to_name, name, NOT_FOUND_COLL );
+}
+
+
+static void print_collection_main( struct Ordered_container* catalog )
+{
+    struct Collection* coll = find_collection_by_name( catalog, get_data_ptr );
+    
+    if ( coll != NULL  )
+    {
+        print_Collection( coll );
+    }
+}
+
+static void delete_collection( struct Ordered_container* catalog )
+{
+    void* node = find_collection_by_name( catalog, get_node );
+    
+    
+    if ( node != NULL  )
+    {
+        struct Collection* coll = OC_get_data_ptr( node );
+        
+        printf("Collection %s deleted\n", get_Collection_name( coll ) );
+        
+        OC_delete_item( catalog, node );
+        
+        destroy_Collection( coll );
+    }
+}
+
+static void modify_rating( struct Ordered_container* lib_ID )
+{
+    struct Record* rec;
+    int ID, rating;
+    
+    if ( !read_int( &ID ) || !read_int( &rating ) )
+    {
+        return;
+    }
+    
+    if ( rating < 0 || rating > MAX_RATING )
+    {
+        print_error( RATING_RANGE );
+        return;
+    }
+    
+    rec = get_data_ptr( lib_ID, comp_Record_to_ID, &ID, NOT_FOUND_ID );
+    
+    if ( rec )
+    {
+        printf( "Rating for record %d changed to %d\n", get_Record_ID(rec), rating );
+        set_Record_rating( rec, rating );
+        
+    }
+}
+
+
+static void apply_collection_func( struct Ordered_container* lib_ID, struct Ordered_container* catalog, Collection_fptr fp )
+{
+    int ID;
+    struct Record* rec;
+    struct Collection* coll = find_collection_by_name( catalog, get_data_ptr );
+    
+    
+    if ( read_int( &ID ) && coll )
+    {
+        rec = get_data_ptr( lib_ID, comp_Record_to_ID, &ID, NOT_FOUND_ID );
+        if ( rec )
+        {
+            fp( coll, rec );
+        }
+    }
+}

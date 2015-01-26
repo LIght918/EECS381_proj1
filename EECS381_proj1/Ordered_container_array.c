@@ -6,6 +6,7 @@ Remove this comment and complete this file with all necessary code.
 #include "Ordered_container.h"
 #include <stdlib.h>
 #include <assert.h> /* TODO #DEFINE NDEBUG */
+#include <stdio.h> /* TODO remove for release */
 
 #define DEFAULT_ALLOCATION 3
 
@@ -270,9 +271,14 @@ int OC_apply_if_arg(const struct Ordered_container* c_ptr, OC_apply_if_arg_fp_t 
     int i;
     void** cur_node = c_ptr->array;
     
+    
+    
     for ( i = 0 ; i < c_ptr->size; ++i)
     {
         int value = afp( *cur_node++, arg_ptr );
+        
+        printf( "%d\n", value );
+        
         if ( value != 0 )
         {
             return value;
