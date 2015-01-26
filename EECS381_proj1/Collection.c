@@ -22,10 +22,6 @@ struct Collection {
     struct Ordered_container* members;
 };
 
-
-/* function prints out the title to the outfile and a newline */
-static void print_Record_title( struct Record* rec, FILE* outfile );
-
 struct Collection* create_Collection(const char* name)
 {
     struct Collection* new_collection = malloc( sizeof( struct Collection ) );
@@ -145,13 +141,4 @@ struct Collection* load_Collection(FILE* input_file, const struct Ordered_contai
     }
     
     return new_collection;
-}
-
-
-/* Helper Functions */
-
-static void print_Record_title( struct Record* rec, FILE* outfile )
-{
-    /* function prints out the title to the outfile and a newline */
-    fprintf( outfile, "%s\n", get_Record_title( rec ) );
 }

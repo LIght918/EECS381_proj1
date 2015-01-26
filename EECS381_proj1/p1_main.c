@@ -697,7 +697,8 @@ static void clear_library( struct Ordered_container* lib_title, struct Ordered_c
     }
     else
     {
-        clear_container(lib_ID, ( void(*)(void*) )destroy_Record, "") ;
+        /*clear_container(lib_ID, ( void(*)(void*) )destroy_Record, "") ;*/
+        OC_clear( lib_ID ); 
         clear_container(lib_title, ( void(*)(void*) )destroy_Record, "All records deleted\n");
     }
 }
@@ -706,6 +707,6 @@ static void clear_library( struct Ordered_container* lib_title, struct Ordered_c
 static void clear_all( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog )
 {
     clear_container( catalog, ( void(*)(void*) )destroy_Collection, "" );
-    clear_container(lib_ID, ( void(*)(void*) )destroy_Record, "") ;
+    /*clear_container(lib_ID, ( void(*)(void*) )destroy_Record, "") ;*/
     clear_container(lib_title, ( void(*)(void*) )destroy_Record, "All data deleted\n" );
 }
