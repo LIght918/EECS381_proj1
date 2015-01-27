@@ -721,6 +721,14 @@ static void quit( struct Ordered_container* lib_title, struct Ordered_container*
 }
 
 
+
+static void clear_all( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog, char* message )
+{
+    clear_container( catalog, ( void(*)(void*) )destroy_Collection, "" );
+    /*clear_container(lib_ID, ( void(*)(void*) )destroy_Record, "") ;*/
+    clear_container(lib_title, ( void(*)(void*) )destroy_Record, message );
+}
+
 /*
  *
  * Restor and load functions
@@ -750,10 +758,10 @@ static FILE* read_open_file( const char* mode )
     return new_file;
 }
 
-/* save the collection by outputing the size and then the contents
-    function takes a OC_apply_arg_fp_t that prints out what the container holds
-    as well as a valid file pointer to read from
-*/
+/*   save the collection by outputing the size and then the contents
+ *   function takes a OC_apply_arg_fp_t that prints out what the container holds
+ *   as well as a valid file pointer to read from
+ */
 static void save_container( struct Ordered_container* c_ptr, OC_apply_arg_fp_t print, FILE* file )
 {
     fprintf( file, "%d\n", OC_get_size( c_ptr ) );
