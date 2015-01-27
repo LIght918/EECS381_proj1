@@ -70,4 +70,9 @@ char* alloc_and_copy( const char* src );
 /* clean up mememory and keep track of allocation */
 void free_string( char* src );
 
+/* print the unrecognized command error */
+void print_error( enum error err  );
+
+void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err );
+
 #endif /* defined(__EECS381_proj1__Utility__) */

@@ -120,7 +120,7 @@ struct Collection* load_Collection(FILE* input_file, const struct Ordered_contai
     void* cur_record = NULL;
     
     /* read in the name of the collection and the number of records*/
-    if ( fscanf( input_file, "%s %d", name, &num_records ) != 2 )
+    if ( fscanf( input_file, "%s %d\n", name, &num_records ) != 2 )
     {
         assert(0);
         return NULL;
@@ -128,19 +128,29 @@ struct Collection* load_Collection(FILE* input_file, const struct Ordered_contai
     
     printf("%s %d\n", name, num_records );
     
+    /* read int the new line */ 
+    /*fget( input_file ); */
+
     new_collection = create_Collection( name );
     
     for ( i = 0; i < num_records; ++i)
     {
+        int val = get_title( input_file, title ); 
+        cur_record = OC_find_item_arg( records, (void*)title, comp_Record_to_title );
+
         /* read in the title and then check if it is in records */
-        if ( get_title( input_file, title ) &&
-               ( cur_record = OC_find_item_arg( records, (void*)title, comp_Record_to_title ) ) )
+        if ( ( cur_record == NULL ) || val )
         {
+            printf("title: %s\n", title );
+            
             /* if given bad input clean up mem and return NULL */
             destroy_Collection( new_collection );
             return NULL;
         }
         
+        printf("its is: %s\n", title );
+        print_Record( cur_record );
+
         OC_insert( new_collection->members, cur_record );
     }
     

@@ -24,7 +24,8 @@ enum error {
     RATING_RANGE,
     FILE_OPEN,
     INVAL_DATA,
-    ASSERT
+    ASSERT,
+    NONE
 };
 
 
@@ -32,8 +33,7 @@ typedef void* (*Node_or_Data)( struct Ordered_container* c_ptr, OC_find_item_arg
 typedef int (*Collection_fptr)(struct Collection* collection_ptr, const struct Record* record_ptr);
 typedef void* (*load_fptr)( FILE* in_file, struct Ordered_container* c_ptr );
 
-/* print the unrecognized command error */
-static void print_error( enum error err  );
+
 
 static void find_record_print( struct Ordered_container* lib_title );
 
@@ -70,7 +70,6 @@ static int get_medium_and_title( char* medium, char* title );
 /* on error clears the rest of the line and throws it away */
 static void clear_line( void );
 
-static void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err );
 static void* get_node(struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err );
 /* print the record with that is equal to the data_prt */
 static void print_rec( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err  );
@@ -256,65 +255,7 @@ int main(void)
 	return 0;
 }
 
-/* print the corisponding error message to *
- * the error passed in                     */
-static void print_error( enum error err  )
-{
-    switch ( err ) {
-        case COMMAND:
-            clear_line();
-            fprintf( stderr, "Unrecognized command!\n");
-            break;
-        case DUPLICATE_REC:
-            fprintf( stderr, "Library already has a record with this title!\n" );
-            break;
-        case DUPLICATE_COLL:
-            fprintf( stderr,"Catalog already has a collection with this name!\n");
-            break;
-        case IN_COLL:
-            fprintf( stderr,"Record is already a member in the collection!\n");
-            break;
-        case NOT_IN_COLL:
-            fprintf( stderr,"Record is not a member in the collection!\n");
-            break;
-        case CANT_DELETE:
-            fprintf( stderr,"Cannot delete a record that is a member of a collection!\n");
-            break;
-        case CLEAR_COLL:
-            fprintf( stderr,"Cannot clear all records unless all collections are empty!\n");
-            break;
-        case NOT_FOUND_TITLE:
-            fprintf( stderr,"No record with that title!\n");
-            break;
-        case NOT_FOUND_ID:
-            fprintf( stderr,"No record with that ID!\n");
-            break;
-        case NOT_FOUND_COLL:
-            fprintf( stderr,"No collection with that name!\n");
-            break;
-        case READ_TITLE:
-            fprintf( stderr,"Could not read a title!\n");
-            break;
-        case READ_INT:
-            clear_line();
-            fprintf( stderr,"Could not read an integer value!\n");
-            break;
-        case RATING_RANGE:
-            fprintf( stderr, "Rating is out of range!\n");
-            break;
-        case FILE_OPEN:
-            fprintf( stderr,"Could not open file!\n");
-            break;
-        case INVAL_DATA:
-            fprintf( stderr,"Invalid data found in file!\n");
-            break;
-        case ASSERT:
-            assert(0); /* should cascade on NDEBUG */ 
-        default:
-            fprintf( stderr, "Error Unknow\n" );
-            break;
-    }
-}
+
 
 static void clear_line( void )
 {
@@ -383,18 +324,6 @@ static void print_record( struct Ordered_container* lib_ID )
     }
     
     print_rec( lib_ID, comp_Record_to_ID, &ID, NOT_FOUND_ID );
-}
-
-static void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err )
-{
-    void* cur_node = get_node(c_ptr, fafp, data_ptr, err );
-
-    if ( cur_node == NULL )
-    {
-        return NULL;
-    }
-    
-    return OC_get_data_ptr( cur_node );
 }
 
 static void* get_node(struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err )
@@ -794,7 +723,7 @@ static bool load_container( struct Ordered_container* c_ptr, struct Ordered_cont
 {
     int i, num;
     void* data_ptr;
-    
+    fi
     /* read in the number of things to load */
     if( fscanf( in_file, "%d", &num ) != 1 )
     {
@@ -847,9 +776,8 @@ static void load_from_file( struct Ordered_container* lib_title, struct Ordered_
             return;
         
         print_containter( lib_title, "Library", "records", (void (*)(void*))print_Record );
-        print_containter( lib_ID, "Library", "records", (void (*)(void*))print_Record );
 
-        if( !load_container( catalog, lib_ID, (load_fptr)load_Collection, in_file ) )
+        if( !load_container( catalog, lib_title, (load_fptr)load_Collection, in_file ) )
             return;
         
         printf( "Data loaded\n" );
