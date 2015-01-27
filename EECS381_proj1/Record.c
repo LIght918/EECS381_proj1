@@ -118,9 +118,6 @@ struct Record* load_Record(FILE* infile)
     new_record = create_Record( medium, title );
     new_record->rating = rating;
     
-    /* for debug only TODO remove */
-    print_Record( new_record ); 
-    
     return new_record;
 }
 

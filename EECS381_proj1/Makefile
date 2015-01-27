@@ -37,6 +37,12 @@ EX_A = p1Aexe
 # following asks for both executables to be built
 default:  $(EX_L) $(EX_A)
 
+test: $(EX_L) $(EX_A)
+	./p1Lexe <test_files/normal_in.txt >test_output/testL_out.txt
+	diff test_output/testL_out.txt test_output/normalL_out.txt
+	diff savefile.txt savefile1.txt
+
+
 # to build this executable, check to see if any of the listed object files
 # need to be rebuilt and do so, then link to create the executable
 $(EX_L): $(OBJS) $(OBJS_L)
@@ -78,3 +84,6 @@ real_clean:
 	rm -f $(EX_L)
 	rm -f $(EX_A)
 
+reset:
+	rm -f savefile1.txt
+	wget http://www.umich.edu/~eecs381/proj1/project1/samples/savefile1.txt

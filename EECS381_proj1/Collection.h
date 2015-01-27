@@ -5,10 +5,8 @@
 //  Created by Charlie OConor on 1/14/15.
 //  Copyright (c) 2015 Charlie OConor. All rights reserved.
 */
-
 #ifndef COLLECTION_H
 #define COLLECTION_H
-
 /*
  Collections are an opaque type containing a name stored as a pointer to a C-string
  in allocated member, and a container of members, represented as pointers to
