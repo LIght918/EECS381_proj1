@@ -113,7 +113,7 @@ int main(void)
                 switch ( command[ 1 ] )
                 {
                     case 'r' :
-                        print_record( lib_ID );
+                        print_record( lib_title );
                         break;
                     case 'L':
                         /*print_lib( lib_title );*/
