@@ -631,7 +631,7 @@ static void clear_all( struct Ordered_container* lib_title, struct Ordered_conta
 {
     clear_container( catalog, ( void(*)(void*) )destroy_Collection, "" );
     /*clear_container(lib_ID, ( void(*)(void*) )destroy_Record, "") ;*/
-    clear_container(lib_title, ( void(*)(void*) )destroy_Record, message );
+    clear_library(lib_title, lib_ID, catalog, message );
 }
 
 /*

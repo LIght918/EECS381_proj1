@@ -324,7 +324,6 @@ int OC_apply_if_arg(const struct Ordered_container* c_ptr, OC_apply_if_arg_fp_t 
 
 static void update_g_item_count( int num )
 {
-    printf("new g: %d  num: %d\n", g_Container_items_in_use, num );
     /* make sure this works */
     g_Container_items_allocated += num;
     g_Container_items_in_use += num;
