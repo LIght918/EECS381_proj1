@@ -74,7 +74,7 @@ int add_Collection_member(struct Collection* collection_ptr, const struct Record
 
 int is_Collection_member_present(const struct Collection* collection_ptr, const struct Record* record_ptr)
 {
-    return (int)OC_find_item( collection_ptr->members, record_ptr );
+    return OC_find_item( collection_ptr->members, record_ptr ) != NULL;
 }
 
 int remove_Collection_member(struct Collection* collection_ptr, const struct Record* record_ptr)

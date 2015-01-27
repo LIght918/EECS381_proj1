@@ -9,11 +9,17 @@
 #ifndef P1_GLOBALS_H
 #define P1_GLOBALS_H
 
+#define MAX_LENGTH 5 /* space needed for "%nns" and a null terminator where n is any num 0-9*/ 
 
 int g_string_memory;			/* number of bytes used in C-strings */
 
 int g_Container_count;		/* number of Ordered_containers currently allocated */
 int g_Container_items_in_use;	/* number of Ordered_container items currently in use */
 int g_Container_items_allocated;	/* number of Ordered_container items currently allocated */
+
+
+extern char name_f_string[ MAX_LENGTH ] ; /*TODO init these */ 
+extern char medium_f_string[ MAX_LENGTH ] ;
+extern char filename_f_string[ MAX_LENGTH ] ;
 
 #endif /* defined(__EECS381_proj1__p1_globals__) */

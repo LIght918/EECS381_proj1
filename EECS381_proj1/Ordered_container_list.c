@@ -1,5 +1,4 @@
 #include "Ordered_container.h"
-#include "p1_globals.h"
 #include <stdlib.h>
 #include <assert.h> /* TODO remove for release */
 #include <stdio.h>

@@ -13,7 +13,6 @@
 #include <stdio.h>
 #include <assert.h>
 
-
 /* skeleton file for Record.c
  The struct declaration below must be used for Record objects.
  Remove this comment and complete this file with all necessary code.

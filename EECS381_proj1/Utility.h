@@ -24,6 +24,8 @@
 #define FILENAME_ARRAY_SIZE  FILENAME_MAX_SIZE + 1
 #define TITLE_ARRAY_SIZE     TITLE_MAX_BUFF_SIZE + 1
 
+#define MAX_LENGTH_fstring 5 /* space needed for "%nns" and a null terminator where n is any num 0-9*/ 
+
 typedef int bool;
 #define true 1
 #define false 0
@@ -103,5 +105,8 @@ void* get_node(struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void
 
 /* on error clears the rest of the line and throws it away */
 void clear_line( void );
+
+/* init static vars */ 
+char* init_global_fstring( char* input, int buffer_size );
 
 #endif /* defined(__EECS381_proj1__Utility__) */

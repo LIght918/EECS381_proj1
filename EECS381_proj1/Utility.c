@@ -9,12 +9,13 @@
 #include "Utility.h"
 #include "Record.h"
 #include "Collection.h"
-#include "p1_globals.h"
 #include "Ordered_container.h" /* TODO remove */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+
+extern int g_string_memory; 
 
 /* removes redundent white space from the given string */
 void remove_white_space( char* c_str )
@@ -241,4 +242,12 @@ void clear_line( void )
     char buffp[ TITLE_ARRAY_SIZE ];
     fgets( buffp , TITLE_MAX_BUFF_SIZE, stdin );
 }
+
+/* init the static formated strings used for input to protect againts buffer overflow */ 
+char* init_global_fstring( char* input, int buffer_size )
+{
+	sprintf( input, "%%%ds", buffer_size );	
+	return input; 
+}
+
 

@@ -9,11 +9,13 @@
 #include <stdio.h>
 #include <string.h>
 
+
+       
+
+
 typedef void* (*Node_or_Data)( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err ) ;
 typedef int (*Collection_fptr)(struct Collection* collection_ptr, const struct Record* record_ptr);
 typedef void* (*load_fptr)( FILE* in_file, struct Ordered_container* c_ptr );
-
-
 
 static void find_record_print( struct Ordered_container* lib_title );
 
@@ -45,14 +47,18 @@ static void save_all_to_file( struct Ordered_container* lib_title, struct Ordere
 /* Helper Functions */
 
 static char get_command_char( void );
+
 /* reads in the medium and title from stdin returns 0 if sucsessful nonzero if not */
 static int get_medium_and_title( char* medium, char* title );
 
-/* print the record with that is equal to the data_prt */
+/* print the record with that is equal to the data_ptr */
 static void print_rec( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err  );
+/* find the record assosiated with that data_ptr and remove it */ 
 static void find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err );
+/* returns true if the record is in the catalog */ 
 static int is_rec_in_catalog( void* data_ptr, void* arg_ptr);
-
+/* reads the name in from stdin and finds the collection assosiated with that 
+ * if there isn't one prints and error and returns NULL */ 
 static struct Collection* find_collection_by_name( struct Ordered_container* catalog, Node_or_Data fp );
 
 static int read_int( int* num );
@@ -60,6 +66,8 @@ static void read_name( char* name );
 static FILE* read_open_file( const char* mode );
 
 void* load_rec( FILE* in_file, struct Ordered_container* c_ptr );
+
+
 
 int main(void)
 {
@@ -72,8 +80,13 @@ int main(void)
     char buffer[ TITLE_ARRAY_SIZE ];*/
     char command[ 3 ];
     
-    /* init the command string */
+    /* end the string with the null term*/
     command[ 2 ] = '\0';
+    
+    /* init the global formated strings */  
+    init_global_fstring( name_f_string, NAME_MAX_SIZE );
+    init_global_fstring( medium_f_string, MEDIUM_MAX_SIZE );
+    init_global_fstring( filename_f_string, FILENAME_MAX_SIZE ); 
     
     for ( ; ; )
     {
@@ -231,8 +244,6 @@ int main(void)
     }
 	return 0;
 }
-
-
 
 
 
@@ -431,7 +442,7 @@ static char get_command_char( void )
 
 static int get_medium_and_title( char* medium, char* title )
 {
-    if ( scanf("%s ", medium) != 1 || !get_title( stdin, title ) ) {
+    if ( scanf(medium_f_string, medium) != 1 || !get_title( stdin, title ) ) {
         return true;
     }
     return false;
@@ -443,7 +454,7 @@ static int get_medium_and_title( char* medium, char* title )
     as well as is a valid pointer */
 static void read_name( char* name )
 {
-    if (scanf( "%s", name ) != 1 )
+    if (scanf( name_f_string, name ) != 1 )
     {
         /* there shouldn't be an error but
          just to be safe */
@@ -634,7 +645,7 @@ static FILE* read_open_file( const char* mode )
     char name[ FILENAME_ARRAY_SIZE ];
     FILE* new_file;
     
-    if ( scanf( "%s", name ) != 1 )
+    if ( scanf( filename_f_string, name ) != 1 )
     {
         assert(0);
         return NULL;

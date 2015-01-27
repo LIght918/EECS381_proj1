@@ -72,7 +72,7 @@ int OC_empty(const struct Ordered_container* c_ptr)
 
 void* OC_get_data_ptr(const void* item_ptr)
 {
-    /* cast to a void** and derefference */
+    /* cast to a void** and dereference */
     return *((void **)item_ptr);
 }
 
@@ -208,7 +208,6 @@ void OC_insert(struct Ordered_container* c_ptr, const void* data_ptr)
     /* copy_array( node, node + 1, size_subarray ); */
     for ( i = 0; i < size_subarray; ++i )
     {
-        /*printf( "c_ptr->size - i == %d \n", c_ptr->size - i );*/
         c_ptr->array[ c_ptr->size - i ] = c_ptr->array[ c_ptr->size - 1 - i ];
     }
     
@@ -276,8 +275,6 @@ int OC_apply_if_arg(const struct Ordered_container* c_ptr, OC_apply_if_arg_fp_t 
     for ( i = 0 ; i < c_ptr->size; ++i)
     {
         int value = afp( *cur_node++, arg_ptr );
-        
-        printf( "%d\n", value );
         
         if ( value != 0 )
         {
