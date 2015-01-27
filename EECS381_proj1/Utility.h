@@ -30,6 +30,8 @@ typedef int bool;
 
 #define MAX_RATING 5 
 
+/* enum */
+
 enum error {
     COMMAND,
     DUPLICATE_REC,
