@@ -129,7 +129,7 @@ struct Collection* load_Collection(FILE* input_file, const struct Ordered_contai
     {
         /* read in the title and then check if it is in records */
         if ( !get_title( input_file, title ) &&
-               ( cur_record = OC_find_item_arg( records, comp_Record_to_title, (void*)title ) )
+               ( cur_record = OC_find_item_arg( records, (void*)title, comp_Record_to_title ) ) )
         {
             /* if given bad input clean up mem and return NULL */
             destroy_Collection( new_collection );
