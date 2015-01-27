@@ -96,8 +96,6 @@ int comp_Record_by_title( const void* left, const void* right )
 
 int comp_Record_to_title(const void* arg_ptr, const void* data_ptr)
 {
-    printf( "Test: %s\n", (char*) arg_ptr );
-    print_Record( (struct Record* )data_ptr );
 	return strcmp( get_Record_title( (struct Record* )data_ptr), (char*) arg_ptr ); 
 }
 
@@ -224,5 +222,23 @@ void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp,
     }
     
     return OC_get_data_ptr( cur_node );
+}
+
+void* get_node(struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err )
+{
+    void* cur_node = OC_find_item_arg( c_ptr, data_ptr, fafp );
+    
+    if ( cur_node == NULL )
+    {
+        print_error( err );
+    }
+    
+    return cur_node;
+}
+
+void clear_line( void )
+{
+    char buffp[ TITLE_ARRAY_SIZE ];
+    fgets( buffp , TITLE_MAX_BUFF_SIZE, stdin );
 }
 

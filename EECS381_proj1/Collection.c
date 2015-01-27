@@ -13,7 +13,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <stdio.h>
 /* #define NDEBUG */ /* include that on release */ 
+
+
+static void print_record_title(const struct Record* record_ptr, FILE* outfile );
 
 /* a Collection contains a pointer to a C-string name and a container
  that holds pointers to Records - the members. */
@@ -105,9 +109,9 @@ void print_Collection(const struct Collection* collection_ptr)
 void save_Collection(const struct Collection* collection_ptr, FILE* outfile)
 {
     /* output the name and number of records in the Collection */
-    fprintf( outfile, "%s%d", collection_ptr->name, OC_get_size( collection_ptr->members ) );
+    fprintf( outfile, "%s %d\n", collection_ptr->name, OC_get_size( collection_ptr->members ) );
     /* loop through the whole collection outputing the title to the file */
-    OC_apply_arg( collection_ptr->members, ( void(*)( void * ,void*))save_Record, outfile );
+    OC_apply_arg( collection_ptr->members, ( void(*)( void * ,void*))print_record_title, outfile );
 }
 
 struct Collection* load_Collection(FILE* input_file, const struct Ordered_container* records)
@@ -126,33 +130,31 @@ struct Collection* load_Collection(FILE* input_file, const struct Ordered_contai
         return NULL;
     }
     
-    printf("%s %d\n", name, num_records );
-    
     /* read int the new line */ 
-    /*fget( input_file ); */
-
+    /* fgetc( input_file ); */
+    
     new_collection = create_Collection( name );
     
     for ( i = 0; i < num_records; ++i)
     {
         int val = get_title( input_file, title ); 
-        cur_record = OC_find_item_arg( records, (void*)title, comp_Record_to_title );
+        cur_record = get_data_ptr((struct Ordered_container*)records, comp_Record_to_title, title, NONE );
 
         /* read in the title and then check if it is in records */
         if ( ( cur_record == NULL ) || val )
         {
-            printf("title: %s\n", title );
-            
             /* if given bad input clean up mem and return NULL */
             destroy_Collection( new_collection );
             return NULL;
         }
-        
-        printf("its is: %s\n", title );
-        print_Record( cur_record );
 
         OC_insert( new_collection->members, cur_record );
     }
     
     return new_collection;
+}
+
+static void print_record_title(const struct Record* record_ptr, FILE* outfile )
+{
+    fprintf( outfile, "%s\n", get_Record_title( record_ptr ) ); 
 }

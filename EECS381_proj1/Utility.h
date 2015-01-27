@@ -10,6 +10,7 @@
 #define EECS381_proj1__Utility__
 
 #include <stdio.h>
+#include "Ordered_container.h"
 
 /* size limits */
 #define NAME_MAX_SIZE 15
@@ -28,6 +29,27 @@ typedef int bool;
 #define false 0
 
 #define MAX_RATING 5 
+
+enum error {
+    COMMAND,
+    DUPLICATE_REC,
+    DUPLICATE_COLL,
+    IN_COLL,
+    NOT_IN_COLL,
+    CANT_DELETE,
+    CLEAR_COLL,
+    NOT_FOUND_TITLE,
+    NOT_FOUND_ID,
+    NOT_FOUND_COLL,
+    READ_TITLE,
+    READ_INT,
+    RATING_RANGE,
+    FILE_OPEN,
+    INVAL_DATA,
+    ASSERT,
+    NONE
+};
+
 
 /* returns true if the char c is a space a newline or a tab
  false if otherwize */
@@ -74,5 +96,10 @@ void free_string( char* src );
 void print_error( enum error err  );
 
 void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err );
+
+void* get_node(struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err );
+
+/* on error clears the rest of the line and throws it away */
+void clear_line( void );
 
 #endif /* defined(__EECS381_proj1__Utility__) */

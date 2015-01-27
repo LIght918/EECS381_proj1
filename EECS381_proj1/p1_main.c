@@ -8,27 +8,6 @@
 #include <stdio.h>
 #include <string.h>
 
-enum error {
-    COMMAND,
-    DUPLICATE_REC,
-    DUPLICATE_COLL,
-    IN_COLL,
-    NOT_IN_COLL,
-    CANT_DELETE,
-    CLEAR_COLL,
-    NOT_FOUND_TITLE,
-    NOT_FOUND_ID,
-    NOT_FOUND_COLL,
-    READ_TITLE,
-    READ_INT,
-    RATING_RANGE,
-    FILE_OPEN,
-    INVAL_DATA,
-    ASSERT,
-    NONE
-};
-
-
 typedef void* (*Node_or_Data)( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err ) ;
 typedef int (*Collection_fptr)(struct Collection* collection_ptr, const struct Record* record_ptr);
 typedef void* (*load_fptr)( FILE* in_file, struct Ordered_container* c_ptr );
@@ -67,10 +46,7 @@ static void save_all_to_file( struct Ordered_container* lib_title, struct Ordere
 static char get_command_char( void );
 /* reads in the medium and title from stdin returns 0 if sucsessful nonzero if not */
 static int get_medium_and_title( char* medium, char* title );
-/* on error clears the rest of the line and throws it away */
-static void clear_line( void );
 
-static void* get_node(struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err );
 /* print the record with that is equal to the data_prt */
 static void print_rec( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err  );
 static void find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err );
@@ -257,11 +233,7 @@ int main(void)
 
 
 
-static void clear_line( void )
-{
-    char buffp[ TITLE_ARRAY_SIZE ];
-    fgets( buffp , TITLE_MAX_BUFF_SIZE, stdin );
-}
+
 
 static void print_rec( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err  )
 {
@@ -324,18 +296,6 @@ static void print_record( struct Ordered_container* lib_ID )
     }
     
     print_rec( lib_ID, comp_Record_to_ID, &ID, NOT_FOUND_ID );
-}
-
-static void* get_node(struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err )
-{
-    void* cur_node = OC_find_item_arg( c_ptr, data_ptr, fafp );
-    
-    if ( cur_node == NULL )
-    {
-        print_error( err );
-    }
-    
-    return cur_node;
 }
 
 
@@ -702,7 +662,7 @@ static void save_container( struct Ordered_container* c_ptr, OC_apply_arg_fp_t p
 
 static void save_all_to_file( struct Ordered_container* lib_title, struct Ordered_container* catalog)
 {
-    FILE* out_file = read_open_file( "w");
+    FILE* out_file = read_open_file( "w" );
     
     if ( out_file )
     {
@@ -710,11 +670,9 @@ static void save_all_to_file( struct Ordered_container* lib_title, struct Ordere
         save_container( catalog, (OC_apply_arg_fp_t) save_Collection, out_file );
         
         printf( "Data saved\n" );
+        fclose( out_file );
     }
 }
-
-
-
 
 
 /* attempts to load data in from the given file returns true if there are no errors 
@@ -723,12 +681,12 @@ static bool load_container( struct Ordered_container* c_ptr, struct Ordered_cont
 {
     int i, num;
     void* data_ptr;
-    fi
+    
     /* read in the number of things to load */
     if( fscanf( in_file, "%d", &num ) != 1 )
     {
         
-        print_error( ASSERT );
+        print_error( INVAL_DATA );
         return false;
     }
     
@@ -774,13 +732,12 @@ static void load_from_file( struct Ordered_container* lib_title, struct Ordered_
         /* load the data in from the file */
         if( !load_container( lib_title, lib_ID, (load_fptr)load_rec , in_file ) )
             return;
-        
-        print_containter( lib_title, "Library", "records", (void (*)(void*))print_Record );
 
         if( !load_container( catalog, lib_title, (load_fptr)load_Collection, in_file ) )
             return;
         
         printf( "Data loaded\n" );
+        fclose( in_file );
     }
 }
 
