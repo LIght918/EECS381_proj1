@@ -820,7 +820,10 @@ static void load_from_file( struct Ordered_container* lib_title, struct Ordered_
     
     if ( in_file ) {
         
+        printf( "SEGFAULT\n" );
+        
         clear_all( lib_title, lib_ID, catalog, "" );
+        
         
         /* load the data in from the file */
         if( !load_container( lib_title, (load_fptr)load_Record , in_file ) )
