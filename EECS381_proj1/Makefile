@@ -40,7 +40,8 @@ default:  $(EX_L) $(EX_A)
 test: $(EX_L) $(EX_A)
 	./p1Lexe <test_files/normal_in.txt >test_output/testL_out.txt
 	diff test_output/testL_out.txt test_output/normalL_out.txt
-	diff savefile.txt savefile1.txt
+	./p1Aexe <test_files/normal_in.txt >test_output/testA_out.txt
+	diff test_output/testA_out.txt test_output/normalA_out.txt	
 
 
 # to build this executable, check to see if any of the listed object files

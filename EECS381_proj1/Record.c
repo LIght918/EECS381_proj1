@@ -118,18 +118,17 @@ struct Record* load_Record(FILE* infile)
     new_record->rating = rating;
     new_record->ID = ID;
     
-    printf( "ID: %d Rec_count: %d\n", ID, Record_ID_counter ); 
+    
     /* set Record ID to the max value we have seen loading from the file
        and decrement it back to what it was before create_Record() was called */
     if( ID > Record_ID_counter )
     {
- 	Record_ID_counter = ID;    
+        Record_ID_counter = ID + 1;
     } 
     else
     {
        Record_ID_counter--; 
     }
-    
     
     return new_record;
 }

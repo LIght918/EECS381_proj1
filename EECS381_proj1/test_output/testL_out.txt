@@ -11,7 +11,9 @@ Enter command: Library is empty
 
 Enter command: Catalog is empty
 
-Enter command: Record 1 added
+Enter command: new g: 0  num: 1
+new g: 1  num: 1
+Record 1 added
 
 Enter command: Memory allocations:
 Records: 1
@@ -21,7 +23,9 @@ Container items in use: 2
 Container items allocated: 2
 C-strings: 11 bytes total
 
-Enter command: Record 2 added
+Enter command: new g: 2  num: 1
+new g: 3  num: 1
+Record 2 added
 
 Enter command: Memory allocations:
 Records: 2
@@ -31,7 +35,9 @@ Container items in use: 4
 Container items allocated: 4
 C-strings: 24 bytes total
 
-Enter command: Record 3 added
+Enter command: new g: 4  num: 1
+new g: 5  num: 1
+Record 3 added
 
 Enter command: Memory allocations:
 Records: 3
@@ -41,7 +47,9 @@ Container items in use: 6
 Container items allocated: 6
 C-strings: 42 bytes total
 
-Enter command: Record 4 added
+Enter command: new g: 6  num: 1
+new g: 7  num: 1
+Record 4 added
 
 Enter command: Memory allocations:
 Records: 4
@@ -51,7 +59,9 @@ Container items in use: 8
 Container items allocated: 8
 C-strings: 69 bytes total
 
-Enter command: Record 5 added
+Enter command: new g: 8  num: 1
+new g: 9  num: 1
+Record 5 added
 
 Enter command: Memory allocations:
 Records: 5
@@ -78,7 +88,9 @@ Enter command: Rating for record 4 changed to 5
 
 Enter command: 1: DVD 1 Tobruk
 
-Enter command: Record 3 Mars Attacks! deleted
+Enter command: new g: 10  num: -1
+new g: 9  num: -1
+Record 3 Mars Attacks! deleted
 
 Enter command: Memory allocations:
 Records: 4
@@ -96,13 +108,17 @@ Enter command: Library contains 4 records:
 
 Enter command: Catalog is empty
 
-Enter command: Collection favorites added
+Enter command: new g: 8  num: 1
+Collection favorites added
 
-Enter command: Member 5 Zorba the Greek added
+Enter command: new g: 9  num: 1
+Member 5 Zorba the Greek added
 
-Enter command: Member 2 Showboat added
+Enter command: new g: 10  num: 1
+Member 2 Showboat added
 
-Enter command: Collection literary added
+Enter command: new g: 11  num: 1
+Collection literary added
 
 Enter command: Collection favorites contains:
 2: VHS 4 Showboat
@@ -114,9 +130,11 @@ Collection favorites contains:
 5: VHS u Zorba the Greek
 Collection literary contains: None
 
-Enter command: Member 4 Much Ado about Nothing added
+Enter command: new g: 12  num: 1
+Member 4 Much Ado about Nothing added
 
-Enter command: Member 5 Zorba the Greek added
+Enter command: new g: 13  num: 1
+Member 5 Zorba the Greek added
 
 Enter command: Catalog contains 2 collections:
 Collection favorites contains:
@@ -126,13 +144,20 @@ Collection literary contains:
 4: DVD 5 Much Ado about Nothing
 5: VHS u Zorba the Greek
 
-Enter command: Record 6 added
+Enter command: new g: 14  num: 1
+new g: 15  num: 1
+Record 6 added
 
 Enter command: Data saved
 
-Enter command: All collections deleted
+Enter command: new g: 16  num: -2
+new g: 14  num: -2
+new g: 12  num: -2
+All collections deleted
 
-Enter command: All records deleted
+Enter command: new g: 10  num: -5
+new g: 5  num: -5
+All records deleted
 
 Enter command: Memory allocations:
 Records: 0
@@ -142,11 +167,24 @@ Container items in use: 0
 Container items allocated: 0
 C-strings: 0 bytes total
 
-Enter command: ID: 6 Rec_count: 2
-ID: 4 Rec_count: 7
-ID: 2 Rec_count: 7
-ID: 1 Rec_count: 7
-ID: 5 Rec_count: 7
+Enter command: new g: 0  num: 0
+new g: 0  num: 0
+new g: 0  num: 1
+new g: 1  num: 1
+new g: 2  num: 1
+new g: 3  num: 1
+new g: 4  num: 1
+new g: 5  num: 1
+new g: 6  num: 1
+new g: 7  num: 1
+new g: 8  num: 1
+new g: 9  num: 1
+new g: 10  num: 1
+new g: 11  num: 1
+new g: 12  num: 1
+new g: 13  num: 1
+new g: 14  num: 1
+new g: 15  num: 1
 Data loaded
 
 Enter command: Memory allocations:
@@ -157,13 +195,15 @@ Container items in use: 16
 Container items allocated: 16
 C-strings: 106 bytes total
 
-Enter command: Record 6 added
+Enter command: new g: 16  num: 1
+new g: 17  num: 1
+Record 7 added
 
 Enter command: Library contains 6 records:
 6: DVD u Bleak House
 4: DVD 5 Much Ado about Nothing
 2: VHS 4 Showboat
-6: VHS u The Money Pit
+7: VHS u The Money Pit
 1: DVD 1 Tobruk
 5: VHS u Zorba the Greek
 
@@ -176,13 +216,16 @@ Collection literary contains:
 5: VHS u Zorba the Greek
 
 Enter command: Collection literary deleted
+new g: 18  num: -1
+new g: 17  num: -2
 
 Enter command: Catalog contains 1 collections:
 Collection favorites contains:
 2: VHS 4 Showboat
 5: VHS u Zorba the Greek
 
-Enter command: Member 2 Showboat deleted
+Enter command: new g: 15  num: -1
+Member 2 Showboat deleted
 
 Enter command: Catalog contains 1 collections:
 Collection favorites contains:
@@ -196,7 +239,10 @@ Container items in use: 14
 Container items allocated: 14
 C-strings: 115 bytes total
 
-Enter command: All data deleted
+Enter command: new g: 14  num: -1
+new g: 13  num: -1
+new g: 12  num: -6
+All data deleted
 
 Enter command: Memory allocations:
 Records: 6
@@ -206,5 +252,7 @@ Container items in use: 6
 Container items allocated: 6
 C-strings: 0 bytes total
 
-Enter command: All data deleted
+Enter command: new g: 6  num: 0
+new g: 6  num: 0
+All data deleted
 Done
