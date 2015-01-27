@@ -30,7 +30,7 @@ enum error {
 
 typedef void* (*Node_or_Data)( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err ) ;
 typedef int (*Collection_fptr)(struct Collection* collection_ptr, const struct Record* record_ptr);
-typedef void* (*load_fptr)( FILE* c_ptr );
+typedef void* (*load_fptr)( FILE* in_file, struct Ordered_container* c_ptr );
 
 /* print the unrecognized command error */
 static void print_error( enum error err  );
@@ -82,6 +82,8 @@ static struct Collection* find_collection_by_name( struct Ordered_container* cat
 static int read_int( int* num );
 static void read_name( char* name );
 static FILE* read_open_file( const char* mode );
+
+void* load_rec( FILE* in_file, struct Ordered_container* c_ptr );
 
 int main(void)
 {
@@ -782,9 +784,13 @@ static void save_all_to_file( struct Ordered_container* lib_title, struct Ordere
     }
 }
 
+
+
+
+
 /* attempts to load data in from the given file returns true if there are no errors 
     returns false if a read error occurs */
-static bool load_container( struct Ordered_container* c_ptr, load_fptr load, FILE* in_file )
+static bool load_container( struct Ordered_container* c_ptr, struct Ordered_container* r_ptr, load_fptr load, FILE* in_file )
 {
     int i, num;
     void* data_ptr;
@@ -799,7 +805,7 @@ static bool load_container( struct Ordered_container* c_ptr, load_fptr load, FIL
     /* load the data */
     for ( i = 0; i < num; ++i )
     {
-        data_ptr = load( in_file );
+        data_ptr = load( in_file, r_ptr );
         
         if ( data_ptr == NULL )
         {
@@ -814,21 +820,35 @@ static bool load_container( struct Ordered_container* c_ptr, load_fptr load, FIL
 }
 
 
+void* load_rec( FILE* in_file, struct Ordered_container* r_ptr )
+{
+    struct Record* rec = load_Record( in_file ); 
+    if ( rec )
+    {
+        OC_insert( r_ptr, rec );
+    }
+
+    return rec; 
+}
+
 static void load_from_file( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog )
 {
     FILE* in_file = read_open_file( "r" );
     
-    if ( in_file ) {
+    if ( in_file ) 
+    {
         
-        printf( "SEGFAULT\n" );
         
         clear_all( lib_title, lib_ID, catalog, "" );
         
-        
         /* load the data in from the file */
-        if( !load_container( lib_title, (load_fptr)load_Record , in_file ) )
+        if( !load_container( lib_title, lib_ID, (load_fptr)load_rec , in_file ) )
             return;
-        if( !load_container( catalog, (load_fptr)load_Collection, in_file ) )
+        
+        print_containter( lib_title, "Library", "records", (void (*)(void*))print_Record );
+        print_containter( lib_ID, "Library", "records", (void (*)(void*))print_Record );
+
+        if( !load_container( catalog, lib_ID, (load_fptr)load_Collection, in_file ) )
             return;
         
         printf( "Data loaded\n" );
