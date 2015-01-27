@@ -798,7 +798,8 @@ static bool load_container( struct Ordered_container* c_ptr, struct Ordered_cont
     /* read in the number of things to load */
     if( fscanf( in_file, "%d", &num ) != 1 )
     {
-        print_error( INVAL_DATA );
+        
+        print_error( ASSERT );
         return false;
     }
     

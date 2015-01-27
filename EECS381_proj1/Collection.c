@@ -121,14 +121,19 @@ struct Collection* load_Collection(FILE* input_file, const struct Ordered_contai
     
     /* read in the name of the collection and the number of records*/
     if ( fscanf( input_file, "%s %d", name, &num_records ) != 2 )
+    {
+        assert(0);
         return NULL;
+    }
+    
+    printf("%s %d\n", name, num_records );
     
     new_collection = create_Collection( name );
     
     for ( i = 0; i < num_records; ++i)
     {
         /* read in the title and then check if it is in records */
-        if ( !get_title( input_file, title ) &&
+        if ( get_title( input_file, title ) &&
                ( cur_record = OC_find_item_arg( records, (void*)title, comp_Record_to_title ) ) )
         {
             /* if given bad input clean up mem and return NULL */
