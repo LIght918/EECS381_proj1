@@ -142,7 +142,12 @@ Container items in use: 0
 Container items allocated: 0
 C-strings: 0 bytes total
 
-Enter command: Data loaded
+Enter command: ID: 6 Rec_count: 2
+ID: 4 Rec_count: 7
+ID: 2 Rec_count: 7
+ID: 1 Rec_count: 7
+ID: 5 Rec_count: 7
+Data loaded
 
 Enter command: Memory allocations:
 Records: 5
@@ -155,40 +160,40 @@ C-strings: 106 bytes total
 Enter command: Record 6 added
 
 Enter command: Library contains 6 records:
-1: DVD u Bleak House
-2: DVD 5 Much Ado about Nothing
-3: VHS 4 Showboat
+6: DVD u Bleak House
+4: DVD 5 Much Ado about Nothing
+2: VHS 4 Showboat
 6: VHS u The Money Pit
-4: DVD 1 Tobruk
+1: DVD 1 Tobruk
 5: VHS u Zorba the Greek
 
 Enter command: Catalog contains 2 collections:
 Collection favorites contains:
-3: VHS 4 Showboat
+2: VHS 4 Showboat
 5: VHS u Zorba the Greek
 Collection literary contains:
-2: DVD 5 Much Ado about Nothing
+4: DVD 5 Much Ado about Nothing
 5: VHS u Zorba the Greek
 
 Enter command: Collection literary deleted
 
 Enter command: Catalog contains 1 collections:
 Collection favorites contains:
-3: VHS 4 Showboat
+2: VHS 4 Showboat
 5: VHS u Zorba the Greek
 
-Enter command: 
+Enter command: Member 2 Showboat deleted
+
 Enter command: Catalog contains 1 collections:
 Collection favorites contains:
-3: VHS 4 Showboat
 5: VHS u Zorba the Greek
 
 Enter command: Memory allocations:
 Records: 6
 Collections: 1
 Containers: 4
-Container items in use: 15
-Container items allocated: 15
+Container items in use: 14
+Container items allocated: 14
 C-strings: 115 bytes total
 
 Enter command: All data deleted
@@ -201,4 +206,5 @@ Container items in use: 6
 Container items allocated: 6
 C-strings: 0 bytes total
 
-Enter command: Done
+Enter command: All data deleted
+Done
