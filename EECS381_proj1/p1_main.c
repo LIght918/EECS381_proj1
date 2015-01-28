@@ -9,38 +9,79 @@
 #include <stdio.h>
 #include <string.h>
 
+#define MAX_RATING 5
+#define MIN_RATING 1
 
-typedef void* (*Node_or_Data)( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err ) ;
+/* typedef for function ptr for convinence */
+typedef void* (*Node_or_Data)( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp,
+                                        void* data_ptr, enum error err ) ;
+
 typedef int (*Collection_fptr)(struct Collection* collection_ptr, const struct Record* record_ptr);
+
 typedef void* (*load_fptr)( FILE* in_file, struct Ordered_container* c_ptr );
+
+/*
+ *
+ *  Function Declarations
+ *
+ *     top level functions - called from main()
+ */
+
+
 
 static void find_record_print( struct Ordered_container* lib_title );
 
 static void add_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID );
+
 static void add_coll( struct Ordered_container* catalog );
 
-static void delete_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog);
+static void delete_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID,
+                           struct Ordered_container* catalog);
+
 static void delete_collection( struct Ordered_container* catalog );
 
 static void print_collection_main( struct Ordered_container* catalog );
-static void print_record( struct Ordered_container* lib_ID );
-static void print_containter( struct Ordered_container* c_ptr, char* type, char* holds, OC_apply_fp_t fp );
-static void print_allocation( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog);
 
-static void apply_collection_func( struct Ordered_container* lib_ID, struct Ordered_container* catalog, Collection_fptr fp, char* action, enum error err );
+static void print_record( struct Ordered_container* lib_ID );
+
+static void print_containter( struct Ordered_container* c_ptr, char* type, char* holds, OC_apply_fp_t fp );
+
+static void print_allocation( struct Ordered_container* lib_title, struct Ordered_container* lib_ID,
+                              struct Ordered_container* catalog);
+
+
+/* reads in a <name> <ID> and applies function pointer to that Container */
+/* used for add and delete */
+static void apply_collection_func( struct Ordered_container* lib_ID, struct Ordered_container* catalog,
+                                   Collection_fptr fp, char* action, enum error err );
+
 static void modify_rating( struct Ordered_container* lib_ID );
 
 static void clear_container( struct Ordered_container* c_ptr , OC_apply_fp_t destructor, char* output );
-static void clear_library( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog, char* output );
-static void clear_all( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog, char* message );
-static void quit( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog );
 
-static void load_from_file( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog );
-static void load_from_file( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog );
+static void clear_library( struct Ordered_container* lib_title, struct Ordered_container* lib_ID,
+                           struct Ordered_container* catalog, char* output );
+
+static void clear_all( struct Ordered_container* lib_title, struct Ordered_container* lib_ID,
+                       struct Ordered_container* catalog, char* message );
+
+static void quit( struct Ordered_container* lib_title, struct Ordered_container* lib_ID,
+                  struct Ordered_container* catalog );
+
+static void load_from_file( struct Ordered_container* lib_title, struct Ordered_container* lib_ID,
+                            struct Ordered_container* catalog );
+
+static void load_from_file( struct Ordered_container* lib_title, struct Ordered_container* lib_ID,
+                            struct Ordered_container* catalog );
+
 static void save_all_to_file( struct Ordered_container* lib_title, struct Ordered_container* catalog);
 
 
-/* Helper Functions */
+
+
+/*
+ *  Helper Functions
+ */
 
 static char get_command_char( void );
 
@@ -59,12 +100,19 @@ static void find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t 
  * if there isn't one prints and error and returns NULL */ 
 static struct Collection* find_collection_by_name( struct Ordered_container* catalog, Node_or_Data fp );
 
+
+
 /* 
  *   read in input with checks for overflow buffers
  */
 
+/* reads in a int and returns true if there was no error
+ if an error occures it prints a message and returns false */
 static int read_int( int* num );
+
 static void read_name( char* name );
+
+/* if fopen fails it prints an error and returns NULL */
 static FILE* read_open_file( const char* mode );
 
 
@@ -77,14 +125,22 @@ static FILE* read_open_file( const char* mode );
 void* load_rec( FILE* in_file, struct Ordered_container* c_ptr );
 
 
+
+
+
+
+
+
 int main( void )
 {
+    int i;
+    char command[ 3 ];
     struct Ordered_container* lib_title = OC_create_container( comp_Record_by_title );
     struct Ordered_container* lib_ID    = OC_create_container( comp_Record_by_ID );
     struct Ordered_container* catalog   = OC_create_container( comp_Collection_by_name );
-    int i;
     
-    char command[ 3 ];
+    
+    
     
     /* end the string with the null term*/
     command[ 2 ] = '\0';
@@ -247,15 +303,7 @@ int main( void )
 	return 0;
 }
 
-static void print_rec( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err  )
-{
-    struct Record* rec = get_data_ptr( c_ptr, fafp, data_ptr, err );
-    
-    if ( rec != NULL )
-    {
-        print_Record( rec );
-    }
-}
+
 
 static struct Record* find_record_by_title( struct Ordered_container* lib_title )
 {
@@ -272,29 +320,25 @@ static struct Record* find_record_by_title( struct Ordered_container* lib_title 
     return rec;
 }
 
-
+static void print_rec( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err  )
+{
+    struct Record* rec = get_data_ptr( c_ptr, fafp, data_ptr, err );
+    
+    if ( rec != NULL )
+    {
+        print_Record( rec );
+    }
+}
 
 static void find_record_print( struct Ordered_container* lib_title )
 {
     struct Record* rec = find_record_by_title( lib_title );
     
     /* if we find the record print it out */
-    if ( rec )
+    if ( rec != NULL )
     {
         print_Record( rec );
     }
-}
-
-/* reads in a int and returns true if there was no error
-    if an error occures it prints a message and returns false */
-static int read_int( int* num )
-{
-    if ( scanf("%d", num ) != 1 )
-    {
-        print_error( READ_INT );
-        return false;
-    }
-    return true;
 }
 
 
@@ -517,12 +561,14 @@ static void modify_rating( struct Ordered_container* lib_ID )
     struct Record* rec;
     int ID, rating;
     
+    /* read input and check for errors */
     if ( !read_int( &ID ) || !read_int( &rating ) )
     {
         return;
     }
     
-    if ( rating < 0 || rating > MAX_RATING )
+    /* make sure rating is in range */
+    if ( rating < MIN_RATING || rating > MAX_RATING )
     {
         print_error( RATING_RANGE );
         return;
@@ -611,6 +657,14 @@ static void clear_library( struct Ordered_container* lib_title, struct Ordered_c
     }
 }
 
+static void clear_all( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog, char* message )
+{
+    clear_container( catalog, ( void(*)(void*) )destroy_Collection, "" );
+    /*clear_container(lib_ID, ( void(*)(void*) )destroy_Record, "") ;*/
+    clear_library(lib_title, lib_ID, catalog, message );
+}
+
+
 static void quit( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog )
 {
     clear_all( lib_title, lib_ID, catalog, "All data deleted\n" );
@@ -619,13 +673,6 @@ static void quit( struct Ordered_container* lib_title, struct Ordered_container*
 }
 
 
-
-static void clear_all( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog, char* message )
-{
-    clear_container( catalog, ( void(*)(void*) )destroy_Collection, "" );
-    /*clear_container(lib_ID, ( void(*)(void*) )destroy_Record, "") ;*/
-    clear_library(lib_title, lib_ID, catalog, message );
-}
 
 /*
  *
@@ -744,5 +791,26 @@ static void load_from_file( struct Ordered_container* lib_title, struct Ordered_
         printf( "Data loaded\n" );
         fclose( in_file );
     }
+}
+
+
+/*
+ *
+ *  function to read in
+ *
+ */
+
+
+
+/* reads in a int and returns true if there was no error
+ if an error occures it prints a message and returns false */
+static int read_int( int* num )
+{
+    if ( scanf("%d", num ) != 1 )
+    {
+        print_error( READ_INT );
+        return false;
+    }
+    return true;
 }
 

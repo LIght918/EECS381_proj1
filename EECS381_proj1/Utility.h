@@ -30,7 +30,6 @@ typedef int bool;
 #define true 1
 #define false 0
 
-#define MAX_RATING 5 
 #define MAX_LENGTH 5 /* space needed for "%nns" and a null terminator where n is any num 0-9*/
 
 /* enum */
