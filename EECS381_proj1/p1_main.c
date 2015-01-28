@@ -3,24 +3,11 @@
 #include "Ordered_container.h"
 #include "Utility.h"
 #include "Record.h"
+#include "p1_globals.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-extern int g_string_memory;            /* number of bytes used in C-strings */
-
-extern int g_Container_count;      /* number of Ordered_containers currently allocated */
-extern int g_Container_items_in_use;   /* number of Ordered_container items currently in use */
-extern int g_Container_items_allocated;    /* number of Ordered_container items currently allocated */
-
-
-extern char name_f_string[ MAX_LENGTH ] ; /*TODO init these */ 
-extern char medium_f_string[ MAX_LENGTH ] ;
-extern char filename_f_string[ MAX_LENGTH ] ;
-
-
-
 
 
 typedef void* (*Node_or_Data)( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err ) ;
@@ -50,7 +37,6 @@ static void quit( struct Ordered_container* lib_title, struct Ordered_container*
 
 static void load_from_file( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog );
 static void load_from_file( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog );
-
 static void save_all_to_file( struct Ordered_container* lib_title, struct Ordered_container* catalog);
 
 
@@ -67,20 +53,28 @@ static void print_rec( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fa
 /* find the record assosiated with that data_ptr and remove it */ 
 static void find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err );
 
-/* returns true if the record is in the catalog */ 
-static int is_rec_in_catalog( void* data_ptr, void* arg_ptr);
+
 
 /* reads the name in from stdin and finds the collection assosiated with that 
  * if there isn't one prints and error and returns NULL */ 
 static struct Collection* find_collection_by_name( struct Ordered_container* catalog, Node_or_Data fp );
 
+/* 
+ *   read in input with checks for overflow buffers
+ */
+
 static int read_int( int* num );
 static void read_name( char* name );
 static FILE* read_open_file( const char* mode );
 
-/* use as a function pointer */
-void* load_rec( FILE* in_file, struct Ordered_container* c_ptr );
 
+/* 
+ * used as function pointers in other functions
+ *
+ */
+
+/* loads the Ordered Container with a next record in the file and returns the record */
+void* load_rec( FILE* in_file, struct Ordered_container* c_ptr );
 
 
 int main( void )
@@ -373,10 +367,7 @@ static void find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t 
     OC_delete_item( c_ptr, node );
 }
 
-int is_rec_in_catalog( void* data_ptr, void* arg_ptr)
-{
-    return is_Collection_member_present( ( struct Collection* )data_ptr, arg_ptr );
-}
+
 
 
 
@@ -391,7 +382,7 @@ static void delete_record( struct Ordered_container* lib_title, struct Ordered_c
         
         /* check to see if Record is in catalog 
            if so throw and error and return */
-        if( OC_apply_if_arg( catalog, is_rec_in_catalog, rec_to_remove ) )
+        if( OC_apply_if_arg( catalog, (OC_apply_if_arg_fp_t) is_Collection_member_present, rec_to_remove ) )
         {
             print_error( IN_COLL ) ;
             return ;

@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5A321EB91A78472E00C37846 /* Ordered_container_array.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624A61A673F7700D95555 /* Ordered_container_array.c */; };
-		5A321EBE1A78C53B00C37846 /* Ordered_container_demo1.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624B21A673F7700D95555 /* Ordered_container_demo1.c */; };
+		5A321EBF1A78D87300C37846 /* p1_main.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624AB1A673F7700D95555 /* p1_main.c */; };
 		5AE624C71A6743CE00D95555 /* Record.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624C51A6743CE00D95555 /* Record.c */; };
 		5AE624CA1A67440F00D95555 /* Utility.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624C81A67440F00D95555 /* Utility.c */; };
 		5AE624CD1A6747DB00D95555 /* Collection.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AE624CB1A6747DB00D95555 /* Collection.c */; };
@@ -181,9 +181,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5A321EBF1A78D87300C37846 /* p1_main.c in Sources */,
 				5AE624CD1A6747DB00D95555 /* Collection.c in Sources */,
 				5AE624C71A6743CE00D95555 /* Record.c in Sources */,
-				5A321EBE1A78C53B00C37846 /* Ordered_container_demo1.c in Sources */,
 				5AE624CA1A67440F00D95555 /* Utility.c in Sources */,
 				5A321EB91A78472E00C37846 /* Ordered_container_array.c in Sources */,
 				5AE624D01A67484A00D95555 /* p1_globals.c in Sources */,
