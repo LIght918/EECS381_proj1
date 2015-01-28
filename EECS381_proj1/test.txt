@@ -44,3 +44,4 @@ I like this item: s2
 I like this item: s4
 size is 0
 Done
+Program ended with exit code: 0
