@@ -77,51 +77,8 @@ void* OC_get_data_ptr(const void* item_ptr)
     return *((void **)item_ptr);
 }
 
-/* Helper functions */
-static void init_Order_containter( struct Ordered_container* c_ptr )
-{
-    c_ptr->array = malloc( sizeof( void* ) * DEFAULT_ALLOCATION );
-    c_ptr->size = 0;
-    c_ptr->allocation = DEFAULT_ALLOCATION;
-    
-    /* keep track of allocation */
-    g_Container_items_allocated += DEFAULT_ALLOCATION;
-}
-
-static void** OC_search( const struct Ordered_container* c_ptr, OC_comp_fp_t f_ptr, const void* arg_ptr )
-{
-    int min = 0 ;
-    int max; 
 
 
-    while( min <= max )
-    {
-        int com_value; 
-        int mid = min + ( max + min ) / 2 
-
-        comp_value = f_ptr( arg_ptr, c_ptr->array[ min ] );
-
-        if ( comp_value == 0 )
-        {
-            /* code */
-        }
-
-    }
-}
-
-/* copies the old array to a new array
-        requires that the array_new has enough space to hold array_old
-        requires that size of old array be correct */
-static void copy_array( void** array_old, void** array_new, int size )
-{
-    int i;
-    for (i = 0; i < size; ++i )
-    {
-        *array_new = *array_old;
-        array_new++;
-        array_old++;
-    }
-}
 
 void OC_delete_item(struct Ordered_container* c_ptr, void* item_ptr)
 {
@@ -138,15 +95,9 @@ void OC_delete_item(struct Ordered_container* c_ptr, void* item_ptr)
 
 void* OC_find_item(const struct Ordered_container* c_ptr, const void* data_ptr)
 {
-    void** node = OC_search( c_ptr, c_ptr->comp_fun, data_ptr );
+    void* node = bsearch(data_ptr, c_ptr->array, c_ptr->size, sizeof(void*), c_ptr->comp_fun);
     
-    if ( node ) {
-        return ( c_ptr->comp_fun( data_ptr, *node ) == 0 ) ? node : NULL;
-    }
-    else
-    {
-        return NULL;
-    }
+    return node;
 }
 
 void OC_insert(struct Ordered_container* c_ptr, const void* data_ptr)
@@ -183,20 +134,9 @@ void OC_insert(struct Ordered_container* c_ptr, const void* data_ptr)
 
 void* OC_find_item_arg(const struct Ordered_container* c_ptr, const void* arg_ptr, OC_find_item_arg_fp_t fafp)
 {
-    void** node; 
+    void* node = bsearch(arg_ptr, c_ptr->array, c_ptr->size, sizeof(void*), fafp);
     
-    if ( c_ptr->size == 0 )
-        return NULL;
-    
-    node = OC_search( c_ptr, fafp, arg_ptr );
-    
-    /*printf("distance: %d  size: %d\n", node - c_ptr->array, c_ptr->size );*/
-    if ( ( node - c_ptr->array ) >= c_ptr->size )
-    {
-        return NULL; 
-    }
-    
-    return ( fafp( arg_ptr, *node ) == 0 ) ? node : NULL; 
+    return node;
 }
 
 
@@ -257,6 +197,87 @@ int OC_apply_if_arg(const struct Ordered_container* c_ptr, OC_apply_if_arg_fp_t 
     return 0;
 }
 
+/* Helper functions */
+static void OC_grow( struct Ordered_container* c_ptr )
+{
+    int new_allocation;
+    void** new_array;
+    
+    new_allocation = 2 * ( c_ptr->allocation + 1 );
+    new_array = malloc( sizeof( void* ) * new_allocation );
+    
+    /* copy over the memory */
+    copy_array( c_ptr->array, new_array, c_ptr->size );
+    
+    /* take care of global */
+    g_Container_items_allocated += new_allocation - c_ptr->allocation;
+    
+    c_ptr->array = new_array;
+    c_ptr->allocation = new_allocation;
+}
 
 
+static void init_Order_containter( struct Ordered_container* c_ptr )
+{
+    c_ptr->array = malloc( sizeof( void* ) * DEFAULT_ALLOCATION );
+    c_ptr->size = 0;
+    c_ptr->allocation = DEFAULT_ALLOCATION;
+    
+    /* keep track of allocation */
+    g_Container_items_allocated += DEFAULT_ALLOCATION;
+}
 
+static void** OC_search( const struct Ordered_container* c_ptr, OC_comp_fp_t f_ptr, const void* arg_ptr )
+{
+    int left = 0 ;
+    int right;
+    
+    if ( OC_empty( c_ptr ) )
+    {
+        return c_ptr->array;
+    }
+    
+    right = c_ptr->size - 1;
+    
+    while( left <= right )
+    {
+        int com_value;
+        int mid = left + ( right + left ) / 2 ;
+        
+        com_value = f_ptr( arg_ptr, c_ptr->array[ mid ] );
+        
+        if ( left == mid )
+        {
+            if ( com_value > 0 ) {
+                return c_ptr->array + mid ;
+            }
+        }
+        if ( com_value < 0 ) {
+            left = mid + 1;
+            if ( left > right ) {
+                return c_ptr->array + mid + 1;
+            }
+        }
+        else
+        {
+            right = mid - 1;
+        }
+        
+    }
+    
+    return NULL;
+}
+
+/* copies the old array to a new array
+ requires that the array_new has enough space to hold array_old
+ requires that size of old array be correct */
+static void copy_array( void** array_old, void** array_new, int size )
+{
+    int i;
+    for (i = 0; i < size; ++i )
+    {
+        *array_new = *array_old;
+        array_new++;
+        array_old++;
+    }
+}

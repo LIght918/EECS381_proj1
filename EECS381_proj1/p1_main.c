@@ -127,10 +127,10 @@ int main( void )
                         break;
                     case 'L':
                         /*print_lib( lib_title );*/
-                        printf("%s\n", "titles: ");
+                        /*printf("%s\n", "titles: ");*/
                         print_containter( lib_title, "Library", "records", (void (*)(void*))print_Record );
-                        printf("%s\n", "ID's: ");
-                        print_containter( lib_ID, "Library", "records", (void (*)(void*))print_Record );
+                        /*printf("%s\n", "ID's: ");
+                        print_containter( lib_ID, "Library", "records", (void (*)(void*))print_Record );*/
                         break;
                     case 'C':
                         /* print_catalog( catalog ); */
