@@ -19,6 +19,12 @@ struct Ordered_container {
 	int size;				/* number of items currently in the array */
 };
 
+
+int g_Container_count = 0 ;		/* number of Ordered_containers currently allocated */
+int g_Container_items_in_use = 0 ;	/* number of Ordered_container items currently in use */
+int g_Container_items_allocated = 0 ;	/* number of Ordered_container items currently allocated */
+
+
 /* init member variables to default values */
 static void init_Order_containter( struct Ordered_container* c_ptr );
 static void OC_grow( struct Ordered_container* c_ptr );

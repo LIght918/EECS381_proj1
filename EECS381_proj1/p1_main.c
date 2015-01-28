@@ -637,8 +637,6 @@ static void clear_container( struct Ordered_container* c_ptr , OC_apply_fp_t des
     printf( "%s", output );
 }
 
-
-
 static void clear_library( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog, char* output )
 {
     if ( strlen( output ) > 0 && OC_apply_if( catalog, is_Collection_not_empty ) )
@@ -675,8 +673,6 @@ static void quit( struct Ordered_container* lib_title, struct Ordered_container*
     printf( "Done\n" );
     exit(0);
 }
-
-
 
 /*
  *

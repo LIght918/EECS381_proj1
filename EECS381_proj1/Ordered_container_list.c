@@ -35,6 +35,11 @@ struct Ordered_container
 	int size;
 };
 
+
+int g_Container_count = 0 ;		/* number of Ordered_containers currently allocated */
+int g_Container_items_in_use = 0 ;	/* number of Ordered_container items currently in use */
+int g_Container_items_allocated = 0 ;	/* number of Ordered_container items currently allocated */
+
 /* init member variables in OC to default values */
 static void init_Order_container( struct Ordered_container* c_ptr );
 
