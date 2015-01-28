@@ -115,6 +115,7 @@ static void** OC_search( const struct Ordered_container* c_ptr, OC_comp_fp_t f_p
     while ( left <= right )
     {
         int com_value;
+        /* printf("left: %d right:%d\n", left, right ); */
         mid = left + ( right - left ) / 2;
         /*printf("Mid is: %d\n", mid );*/
         com_value =  f_ptr(  arg_ptr, c_ptr->array[ mid ] );
@@ -123,13 +124,15 @@ static void** OC_search( const struct Ordered_container* c_ptr, OC_comp_fp_t f_p
         {
             return ( c_ptr->array + mid );
         }
-        else if ( com_value > 0 )
+        else if ( com_value < 0 )
         {
             right = mid - 1;
+            mid--;
         }
         else
         {
             left = mid + 1;
+            mid++;
         }
     }
 
@@ -187,7 +190,13 @@ void* OC_find_item(const struct Ordered_container* c_ptr, const void* data_ptr)
 {
     void** node = OC_search( c_ptr, c_ptr->comp_fun, data_ptr );
     
-    return ( c_ptr->comp_fun( data_ptr, *node ) == 0 ) ? node : NULL;
+    if ( node ) {
+        return ( c_ptr->comp_fun( data_ptr, *node ) == 0 ) ? node : NULL;
+    }
+    else
+    {
+        return NULL;
+    }
 }
 
 void OC_insert(struct Ordered_container* c_ptr, const void* data_ptr)
@@ -206,7 +215,7 @@ void OC_insert(struct Ordered_container* c_ptr, const void* data_ptr)
     
     size_subarray = c_ptr->size - (int)( node - c_ptr->array ) ;
     
-    printf("size of subarray %d\n", size_subarray );
+    /*printf("size of subarray %d\n", size_subarray );*/
     
     /* move the right part of the subarray on place to the right */
     for ( i = 0; i < size_subarray; ++i )

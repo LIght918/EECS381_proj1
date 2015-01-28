@@ -1,29 +1,25 @@
 size is 0
 
 inserting s3
-size of subarray 0
 size is 1
 s3
 
 inserting s1
-size of subarray 1
 size is 2
 s1
 s3
 
 inserting s4
-size of subarray 0
 size is 3
 s1
 s3
 s4
 
 inserting s2
-size of subarray 1
 size is 4
 s1
-s3
 s2
+s3
 s4
 
 search for s3:
