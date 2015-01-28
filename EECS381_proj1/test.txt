@@ -1,14 +1,50 @@
-what is there nothing
-5
-1 DVD 0 Bleak House
-2 DVD 5 Much Ado about Nothing
-3 VHS 4 Showboat
-4 DVD 1 Tobruk
-5 VHS 0 Zorba the Greek
-2
-favorites 2
-Showboat
-Zorba the Greek
-literary 2
-Much Ado about Nothing
-Zorba the Greek
+size is 0
+
+inserting s3
+size of subarray 0
+size is 1
+s3
+
+inserting s1
+size of subarray 1
+size is 2
+s1
+s3
+
+inserting s4
+size of subarray 0
+size is 3
+s1
+s3
+s4
+
+inserting s2
+size of subarray 1
+size is 4
+s1
+s3
+s2
+s4
+
+search for s3:
+found item points to s3
+item removed
+size is 3
+s1
+s2
+s4
+
+search for s99:
+probed item not found
+size is 3
+s1
+s2
+s4
+I hate this item: s1
+I hate this item: s2
+I hate this item: s4
+I like this item: s1
+I like this item: s2
+I like this item: s4
+size is 0
+Done

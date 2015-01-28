@@ -9,10 +9,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
-       
-
-
 typedef void* (*Node_or_Data)( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err ) ;
 typedef int (*Collection_fptr)(struct Collection* collection_ptr, const struct Record* record_ptr);
 typedef void* (*load_fptr)( FILE* in_file, struct Ordered_container* c_ptr );
@@ -69,7 +65,7 @@ void* load_rec( FILE* in_file, struct Ordered_container* c_ptr );
 
 
 
-int main(void)
+int main( void )
 {
     struct Ordered_container* lib_title = OC_create_container( comp_Record_by_title );
     struct Ordered_container* lib_ID    = OC_create_container( comp_Record_by_ID );
@@ -133,7 +129,6 @@ int main(void)
                         print_error( COMMAND );
                         break;
                 }
-                
                 break;
             case 'm': /* modify (rating only) */
                 switch ( command[ 1 ] )
@@ -145,7 +140,6 @@ int main(void)
                         print_error( COMMAND );
                         break;
                 }
-                
                 break;
             case 'a' : /* add */
                 switch ( command[ 1 ] )
@@ -213,7 +207,6 @@ int main(void)
                         print_error( COMMAND );
                         break;
                 }
-                
                 break;
             case 'r': /* restore */
                 switch ( command[ 1 ] ) {
@@ -244,8 +237,6 @@ int main(void)
     }
 	return 0;
 }
-
-
 
 static void print_rec( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err  )
 {
@@ -328,7 +319,6 @@ static void add_record( struct Ordered_container* lib_title, struct Ordered_cont
     char medium[ MEDIUM_ARRAY_SIZE ];
     struct Record* new_rec;
     
-
     /* read the record in from the command line */
     if ( !get_medium_and_title( medium, title ) )
     {
@@ -436,9 +426,6 @@ static char get_command_char( void )
     
     return c;
 }
-
-
-
 
 static int get_medium_and_title( char* medium, char* title )
 {
@@ -739,8 +726,6 @@ static void load_from_file( struct Ordered_container* lib_title, struct Ordered_
     
     if ( in_file ) 
     {
-        
-        
         clear_all( lib_title, lib_ID, catalog, "" );
         
         /* load the data in from the file */

@@ -22,7 +22,7 @@ struct Ordered_container {
 static void init_Order_containter( struct Ordered_container* c_ptr );
 static void OC_grow( struct Ordered_container* c_ptr );
 static void copy_array( void** array_old, void** array_new, int size );
-void** OC_search( const struct Ordered_container* c_ptr, OC_comp_fp_t f_ptr, const void* arg_ptr );
+static void** OC_search( const struct Ordered_container* c_ptr, OC_comp_fp_t f_ptr, const void* arg_ptr );
 
 struct Ordered_container* OC_create_container(OC_comp_fp_t f_ptr)
 {
@@ -88,42 +88,42 @@ static void init_Order_containter( struct Ordered_container* c_ptr )
     g_Container_items_allocated += DEFAULT_ALLOCATION;
 }
 
-void** OC_search( const struct Ordered_container* c_ptr, OC_comp_fp_t f_ptr, const void* arg_ptr )
+static void** OC_search( const struct Ordered_container* c_ptr, OC_comp_fp_t f_ptr, const void* arg_ptr )
 {
     int left = 0;
     int mid = 0;
-    int right = c_ptr->size;
+    int right = c_ptr->size - 1 ;
 
-    if ( right == 0 )
+    if ( c_ptr->size == 0 )
     {
         return c_ptr->array; 
     }
     
     /* check if it should be at the end */
-    if ( f_ptr( arg_ptr, c_ptr->array[ right - 1 ] ) < 0)
+    if ( f_ptr( arg_ptr, c_ptr->array[ right ] ) > 0)
     {
-        return c_ptr->array + right;
+        return c_ptr->array + right + 1;
     }
-    if ( f_ptr( arg_ptr, c_ptr->array[ 0 ] ) > 0 )
+    if ( f_ptr( arg_ptr, c_ptr->array[ 0 ] ) < 0 )
     {
         return c_ptr->array;
     }
     
 
-    assert( c_ptr->size < 2 ); 
+    /*assert( c_ptr->size == 1 );*/
 
     while ( left <= right )
     {
         int com_value;
         mid = left + ( right - left ) / 2;
-        printf("Mid is: %d\n", mid );
+        /*printf("Mid is: %d\n", mid );*/
         com_value =  f_ptr(  arg_ptr, c_ptr->array[ mid ] );
-        printf("com_value: %d\n", com_value ); 
+        /*printf("com_value: %d\n", com_value );*/
         if ( com_value == 0 )
         {
             return ( c_ptr->array + mid );
         }
-        else if ( com_value < 0 )
+        else if ( com_value > 0 )
         {
             right = mid - 1;
         }
@@ -204,14 +204,14 @@ void OC_insert(struct Ordered_container* c_ptr, const void* data_ptr)
     /* find the location to insert */
     node = OC_search( c_ptr, c_ptr->comp_fun, data_ptr );
     
-
     size_subarray = c_ptr->size - (int)( node - c_ptr->array ) ;
-
+    
     printf("size of subarray %d\n", size_subarray );
-
+    
     /* move the right part of the subarray on place to the right */
     for ( i = 0; i < size_subarray; ++i )
     {
+        /* fix this line */ 
         c_ptr->array[ c_ptr->size - i ] = c_ptr->array[ c_ptr->size - 1 - i ];
     }
     
@@ -228,16 +228,15 @@ void* OC_find_item_arg(const struct Ordered_container* c_ptr, const void* arg_pt
     
     if ( c_ptr->size == 0 )
         return NULL;
-
+    
     node = OC_search( c_ptr, fafp, arg_ptr );
     
-    printf("distance: %d  size: %d\n", node - c_ptr->array, c_ptr->size );
-
+    /*printf("distance: %d  size: %d\n", node - c_ptr->array, c_ptr->size );*/
     if ( ( node - c_ptr->array ) >= c_ptr->size )
     {
         return NULL; 
     }
-
+    
     return ( fafp( arg_ptr, *node ) == 0 ) ? node : NULL; 
 }
 
