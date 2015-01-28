@@ -14,27 +14,30 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <ctype.h>
 
 extern int g_string_memory; 
+
+void str_cpy(char *dst, const char* src );
+
 
 /* removes redundent white space from the given string */
 void remove_white_space( char* c_str )
 {
-    
     int i = 0;
     char* front_c_str = c_str;
     int last_char_was_white = 0;
     char str_copy[ TITLE_ARRAY_SIZE ];
     
     /* trim all the leading white space */
-    while ( is_white_space( *c_str )) 
+    while ( isspace( *c_str ))
     {
         c_str++;
     }
     
     while ( *c_str != '\0' )
     {
-        if ( is_white_space( *c_str ) ) {
+        if ( isspace( *c_str ) ) {
             if ( !last_char_was_white )
             {
                 str_copy[ i++ ] = *c_str;
@@ -50,7 +53,7 @@ void remove_white_space( char* c_str )
     }
     
     /* trim all the trailing white space */
-    while ( is_white_space( str_copy[ --i ] )) { ; }
+    while ( isspace( str_copy[ --i ] )) { ; }
     
     str_copy[ ++i ] = '\0';
     
@@ -58,24 +61,18 @@ void remove_white_space( char* c_str )
     str_cpy( front_c_str, (char * )str_copy );
 }
 
-/* returns true if the char c is a space a newline or a tab 
-   false if otherwize */
-int is_white_space( char c )
-{
-    return ( c == ' ' ) || ( c == '\n') || (c == '\t' );
-}
-
 /* loads int a title from a file the c_str title is required to have enough space alloc
  returns true if read success full, false if otherwize */
 int get_title( FILE* infile, char* title)
 {
-    
     fgets( title, TITLE_ARRAY_SIZE, infile ) ;
     remove_white_space( title );
 
     return  strlen( title ) <= 0 ;
 }
 
+/* copies string from src to dst */
+/* standard version wasn't working with an array */
 void str_cpy(char *dst, const char* src )
 {
     int i = 0;
@@ -131,6 +128,11 @@ int is_Collection_not_empty( void* data_ptr )
 }
 
 
+
+/* allocates memory and copyes the src string into that
+ * and keeps track of the global allocations
+ * returns NULL if there is a allocation error
+ */
 char* alloc_and_copy( const char* src )
 {
     int length = (int)strlen( src ) + 1 ;
@@ -155,14 +157,22 @@ void free_string( char* src )
     free( src );
 }
 
+/* clears the input buffer on an error */
+void clear_line( void )
+{
+    char buffp[ TITLE_ARRAY_SIZE ];
+    fgets( buffp , TITLE_MAX_BUFF_SIZE, stdin );
+}
+
+
 /* print the corisponding error message to *
  * the error passed in                     */
 void print_error( enum error err  )
 {
     switch ( err ) {
         case COMMAND:
-            clear_line();
             fprintf( stdout, "Unrecognized command!\n");
+            clear_line();
             break;
         case DUPLICATE_REC:
             fprintf( stdout, "Library already has a record with this title!\n" );
@@ -195,19 +205,20 @@ void print_error( enum error err  )
             fprintf( stdout,"Could not read a title!\n");
             break;
         case READ_INT:
-            clear_line();
             fprintf( stdout,"Could not read an integer value!\n");
+            clear_line();
             break;
         case RATING_RANGE:
             fprintf( stdout, "Rating is out of range!\n");
             break;
         case FILE_OPEN:
             fprintf( stdout,"Could not open file!\n");
+            clear_line();
             break;
         case INVAL_DATA:
             fprintf( stdout,"Invalid data found in file!\n");
             break;
-        case NONE:
+        case NONE: /* no error needs to be printed */
             break; 
         case ASSERT:
             assert(0); /* should cascade on NDEBUG */ 
@@ -239,12 +250,6 @@ void* get_node(struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void
     }
     
     return cur_node;
-}
-
-void clear_line( void )
-{
-    char buffp[ TITLE_ARRAY_SIZE ];
-    fgets( buffp , TITLE_MAX_BUFF_SIZE, stdin );
 }
 
 /* init the static formated strings used for input to protect againts buffer overflow */ 

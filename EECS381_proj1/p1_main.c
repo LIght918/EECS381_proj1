@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 #define MAX_RATING 5
 #define MIN_RATING 1
@@ -78,7 +79,6 @@ static void save_all_to_file( struct Ordered_container* lib_title, struct Ordere
 
 
 
-
 /*
  *  Helper Functions
  */
@@ -135,6 +135,8 @@ int main( void )
 {
     int i;
     char command[ 3 ];
+    
+    /* set up the three libraries */
     struct Ordered_container* lib_title = OC_create_container( comp_Record_by_title );
     struct Ordered_container* lib_ID    = OC_create_container( comp_Record_by_ID );
     struct Ordered_container* catalog   = OC_create_container( comp_Collection_by_name );
@@ -366,6 +368,9 @@ static void print_allocation( struct Ordered_container* lib_title, struct Ordere
     printf( "C-strings: %d bytes total\n", g_string_memory );
 }
 
+
+
+
 static void add_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID )
 {
     char title[ TITLE_ARRAY_SIZE ];
@@ -406,7 +411,7 @@ static void find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t 
     if ( node == NULL )
     {
         print_error( err );
-        return; 
+        return;
     }
     
     OC_delete_item( c_ptr, node );
@@ -429,7 +434,7 @@ static void delete_record( struct Ordered_container* lib_title, struct Ordered_c
            if so throw and error and return */
         if( OC_apply_if_arg( catalog, (OC_apply_if_arg_fp_t) is_Collection_member_present, rec_to_remove ) )
         {
-            print_error( IN_COLL ) ;
+            print_error( CANT_DELETE ) ;
             return ;
         }
         
@@ -472,7 +477,7 @@ static char get_command_char( void )
     
     /* load chars until we get one that it not white space 
        and throw an error if we get a EOF */
-    while ( ( ( c = getchar() ) > 0 ) && is_white_space( c ) )
+    while ( ( ( c = getchar() ) > 0 ) && isspace( c ) )
         ;
     
     return c;
@@ -509,7 +514,7 @@ static void add_coll( struct Ordered_container* catalog )
     
     if ( OC_find_item_arg( catalog, name, comp_Collection_to_name ) != NULL )
     {
-        print_error( IN_COLL );
+        print_error( DUPLICATE_COLL );
         return;
     }
     

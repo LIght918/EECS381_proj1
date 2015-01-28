@@ -54,20 +54,12 @@ enum error {
     NONE
 };
 
-
-/* returns true if the char c is a space a newline or a tab
- false if otherwize */
-int is_white_space( char c );
-
 /* removes redundent white space from the given string */
 void remove_white_space( char* c_str );
 
 /* loads int a title from a file the c_str title is required to have enough space alloc
     returns true if read successfull, false if otherwize */
 int get_title( FILE* infile, char* title);
-
-/* local version of strcpy */ 
-void str_cpy(char *dst, const char *src);
 
 /* uses strcmp on the title of each record and returns the value */
 int comp_Record_by_title( const void* left, const void* right );
@@ -93,7 +85,7 @@ int is_Collection_not_empty( void* data_ptr );
 /* allocate memory and copy the src string to it */
 char* alloc_and_copy( const char* src );
 
-/* clean up mememory and keep track of allocation */
+/* clean up memory and keep track of allocation */
 void free_string( char* src );
 
 /* print the unrecognized command error */
