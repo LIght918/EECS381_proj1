@@ -406,6 +406,7 @@ static void find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t 
     if ( node == NULL )
     {
         print_error( err );
+        return; 
     }
     
     OC_delete_item( c_ptr, node );
