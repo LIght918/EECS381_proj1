@@ -3,11 +3,25 @@
 #include "Ordered_container.h"
 #include "Utility.h"
 #include "Record.h"
-#include "p1_globals.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+extern int g_string_memory;            /* number of bytes used in C-strings */
+
+extern int g_Container_count;      /* number of Ordered_containers currently allocated */
+extern int g_Container_items_in_use;   /* number of Ordered_container items currently in use */
+extern int g_Container_items_allocated;    /* number of Ordered_container items currently allocated */
+
+
+extern char name_f_string[ MAX_LENGTH ] ; /*TODO init these */ 
+extern char medium_f_string[ MAX_LENGTH ] ;
+extern char filename_f_string[ MAX_LENGTH ] ;
+
+
+
+
 
 typedef void* (*Node_or_Data)( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err ) ;
 typedef int (*Collection_fptr)(struct Collection* collection_ptr, const struct Record* record_ptr);
@@ -113,7 +127,10 @@ int main( void )
                         break;
                     case 'L':
                         /*print_lib( lib_title );*/
+                        printf("%s\n", "titles: ");
                         print_containter( lib_title, "Library", "records", (void (*)(void*))print_Record );
+                        printf("%s\n", "ID's: ");
+                        print_containter( lib_ID, "Library", "records", (void (*)(void*))print_Record );
                         break;
                     case 'C':
                         /* print_catalog( catalog ); */

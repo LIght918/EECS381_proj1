@@ -70,9 +70,10 @@ int is_white_space( char c )
 int get_title( FILE* infile, char* title)
 {
     
-    int val = !fgets( title, TITLE_ARRAY_SIZE, infile ) ;
+    fgets( title, TITLE_ARRAY_SIZE, infile ) ;
     remove_white_space( title );
-    return val;
+
+    return  strlen( title ) <= 0 ;
 }
 
 void str_cpy(char *dst, const char* src )
@@ -97,7 +98,10 @@ int comp_Record_by_title( const void* left, const void* right )
 
 int comp_Record_to_title(const void* arg_ptr, const void* data_ptr)
 {
-	return strcmp( get_Record_title( (struct Record* )data_ptr), (char*) arg_ptr ); 
+    /*printf( "title: %s\n", (char*) arg_ptr );
+    printf( "record: %s\n", get_Record_title( (struct Record* )data_ptr) );*/
+
+	return strcmp( (char*) arg_ptr, get_Record_title( (struct Record* )data_ptr) ); 
 }
 
 int comp_Record_by_ID( const void* left, const void* right )

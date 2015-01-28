@@ -90,73 +90,23 @@ static void init_Order_containter( struct Ordered_container* c_ptr )
 
 static void** OC_search( const struct Ordered_container* c_ptr, OC_comp_fp_t f_ptr, const void* arg_ptr )
 {
-    int left = 0;
-    int mid = 0;
-    int right = c_ptr->size - 1 ;
+    int min = 0 ;
+    int max; 
 
-    if ( c_ptr->size == 0 )
-    {
-        return c_ptr->array; 
-    }
-    
-    /* check if it should be at the end */
-    if ( f_ptr( arg_ptr, c_ptr->array[ right ] ) > 0)
-    {
-        return c_ptr->array + right + 1;
-    }
-    if ( f_ptr( arg_ptr, c_ptr->array[ 0 ] ) < 0 )
-    {
-        return c_ptr->array;
-    }
-    
 
-    /*assert( c_ptr->size == 1 );*/
-
-    while ( left <= right )
+    while( min <= max )
     {
-        int com_value;
-        /* printf("left: %d right:%d\n", left, right ); */
-        mid = left + ( right - left ) / 2;
-        /*printf("Mid is: %d\n", mid );*/
-        com_value =  f_ptr(  arg_ptr, c_ptr->array[ mid ] );
-        /*printf("com_value: %d\n", com_value );*/
-        if ( com_value == 0 )
+        int com_value; 
+        int mid = min + ( max + min ) / 2 
+
+        comp_value = f_ptr( arg_ptr, c_ptr->array[ min ] );
+
+        if ( comp_value == 0 )
         {
-            return ( c_ptr->array + mid );
+            /* code */
         }
-        else if ( com_value < 0 )
-        {
-            right = mid - 1;
-            mid--;
-        }
-        else
-        {
-            left = mid + 1;
-            mid++;
-        }
+
     }
-
-    /* return the location that the data should be in if it is not found */
-    return ( c_ptr->array + mid );
-}
-
-
-static void OC_grow( struct Ordered_container* c_ptr )
-{
-    int new_allocation;
-    void** new_array;
-    
-    new_allocation = 2 * ( c_ptr->allocation + 1 );
-    new_array = malloc( sizeof( void* ) * new_allocation );
-    
-    /* copy over the memory */
-    copy_array( c_ptr->array, new_array, c_ptr->size );
-    
-    /* take care of global */
-    g_Container_items_allocated += new_allocation - c_ptr->allocation;
-    
-    c_ptr->array = new_array;
-    c_ptr->allocation = new_allocation;
 }
 
 /* copies the old array to a new array
