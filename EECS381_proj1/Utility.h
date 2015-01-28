@@ -12,6 +12,10 @@
 #include <stdio.h>
 #include "Ordered_container.h"
 
+/* converts macros into string literals */
+#define STRINGIFY2(X) #X
+#define STRINGIFY(X) STRINGIFY2(X)
+
 /* size limits */
 #define NAME_MAX_SIZE 15
 #define MEDIUM_MAX_SIZE 7
@@ -24,17 +28,9 @@
 #define FILENAME_ARRAY_SIZE  FILENAME_MAX_SIZE + 1
 #define TITLE_ARRAY_SIZE     TITLE_MAX_BUFF_SIZE + 1
 
-#define MAX_LENGTH_fstring 5 /* space needed for "%nns" and a null terminator where n is any num 0-9*/ 
 
-typedef int bool;
-#define true 1
-#define false 0
-
-#define MAX_LENGTH 5 /* space needed for "%nns" and a null terminator where n is any num 0-9*/
-
-/* enum */
-
-enum error {
+/* enum for Error Handeling */
+enum Error_e {
     COMMAND,
     DUPLICATE_REC,
     DUPLICATE_COLL,
@@ -54,8 +50,10 @@ enum error {
     NONE
 };
 
-/* removes redundent white space from the given string */
-void remove_white_space( char* c_str );
+/* allocates memory of size given and returns a pointer to that block.
+ 
+   Terminates the program if memory allocation fails. */
+void* safe_malloc( size_t size );
 
 /* loads int a title from a file the c_str title is required to have enough space alloc
     returns true if read successfull, false if otherwize */
@@ -73,30 +71,21 @@ int comp_Record_to_title(const void* arg_ptr, const void* data_ptr);
 /* compars a record to a ID, int value returns true if equal */
 int comp_Record_to_ID( const void* arg_ptr, const void* data_ptr );
 
-/* uses strcmp on the name of each Collection and returns the value */
-int comp_Collection_by_name( const void* left, const void* right );
-
-/* uses strcmp on name and collection */
-int comp_Collection_to_name(const void* arg_ptr, const void* data_ptr );
-
-/* returns the inverse of empty */
-int is_Collection_not_empty( void* data_ptr );
-
 /* allocate memory and copy the src string to it */
 char* alloc_and_copy( const char* src );
 
 /* clean up memory and keep track of allocation */
 void free_string( char* src );
 
-/* print the unrecognized command error */
-void print_error( enum error err  );
-
-void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err );
-
-void* get_node(struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err );
-
 /* on error clears the rest of the line and throws it away */
 void clear_line( void );
+
+/* print the unrecognized command error */
+void print_error( enum Error_e err  );
+
+void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum Error_e err );
+
+void* get_node(struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum Error_e err );
 
 /* init static vars */ 
 char* init_global_fstring( char* input, int buffer_size );

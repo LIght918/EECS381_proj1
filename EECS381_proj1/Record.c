@@ -27,11 +27,11 @@ struct Record {
 };
 
 /* local global */
-int Record_ID_counter = 1;
+static int Record_ID_counter = 1;
 
 struct Record* create_Record(const char* medium, const char* title)
 {
-    struct Record* new_Record = malloc( sizeof( struct Record ) );
+    struct Record* new_Record = safe_malloc( sizeof( struct Record ) );
     
     new_Record->ID = Record_ID_counter++;
     new_Record->rating = 0;
@@ -99,25 +99,23 @@ struct Record* load_Record(FILE* infile)
     char medium[ MEDIUM_MAX_SIZE ];
     char title [ TITLE_MAX_BUFF_SIZE ];
     
-    /* TODO include buffer gaurds */
-    if ( fscanf( infile, "%d %s %d",
+    /* read in from the file making sure not to overflow the buffer */
+    if ( fscanf( infile, "%d %" STRINGIFY( MEDIUM_MAX_SIZE )"s %d",
                 &ID, medium, &rating ) != 3 )
     {
         /* throw an error */
         return NULL;
     }
-    if ( !get_title( infile, title ) ) {
+    if ( get_title( infile, title ) ) {
         /* throw an error */
-        /* return NULL;*/
+        return NULL;
     }
     
-    /* make sure this isnt segfaulting */
-    remove_white_space( title );
-    
     new_record = create_Record( medium, title );
+    
+    /* update it's member vars from the defaults to the input values */
     new_record->rating = rating;
     new_record->ID = ID;
-    
     
     /* set Record ID to the max value we have seen loading from the file
        and decrement it back to what it was before create_Record() was called */

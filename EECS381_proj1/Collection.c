@@ -28,7 +28,7 @@ struct Collection {
 
 struct Collection* create_Collection(const char* name)
 {
-    struct Collection* new_collection = malloc( sizeof( struct Collection ) );
+    struct Collection* new_collection = safe_malloc( sizeof( struct Collection ) );
     
     /* alloc mem for name and copy it over */
     new_collection->name = alloc_and_copy( name ); 
@@ -110,8 +110,9 @@ void save_Collection(const struct Collection* collection_ptr, FILE* outfile)
 {
     /* output the name and number of records in the Collection */
     fprintf( outfile, "%s %d\n", collection_ptr->name, OC_get_size( collection_ptr->members ) );
+    
     /* loop through the whole collection outputing the title to the file */
-    OC_apply_arg( collection_ptr->members, ( void(*)( void * ,void*))print_record_title, outfile );
+    OC_apply_arg( collection_ptr->members, ( OC_apply_arg_fp_t )print_record_title, outfile );
 }
 
 struct Collection* load_Collection(FILE* input_file, const struct Ordered_container* records)

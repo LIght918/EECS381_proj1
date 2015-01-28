@@ -1,4 +1,5 @@
 #include "Ordered_container.h"
+#include "Utility.h"
 #include <stdlib.h>
 #include <assert.h> /* TODO remove for release */
 #include <stdio.h>
@@ -44,7 +45,7 @@ struct Ordered_container* OC_create_container(OC_comp_fp_t f_ptr)
 {
 	struct Ordered_container* new_container;
 
-	new_container = ( struct Ordered_container* ) malloc( sizeof( struct Ordered_container ) ); 
+	new_container = ( struct Ordered_container* ) safe_malloc( sizeof( struct Ordered_container ) ); 
 
 	new_container->comp_func = f_ptr;
     init_Order_container( new_container );
@@ -189,7 +190,7 @@ void OC_delete_item(struct Ordered_container* c_ptr, void* item_ptr)
 void OC_insert(struct Ordered_container* c_ptr, const void* data_ptr)
 {
     struct LL_Node* cur_node = c_ptr->first;
-    struct LL_Node* new_node = malloc( sizeof( struct LL_Node ) );
+    struct LL_Node* new_node = safe_malloc( sizeof( struct LL_Node ) );
     
     new_node->data_ptr = (void*)data_ptr;
     c_ptr->size++ ;

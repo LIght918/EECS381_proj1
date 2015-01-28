@@ -4,6 +4,7 @@ Remove this comment and complete this file with all necessary code.
 */
 
 #include "Ordered_container.h"
+#include "Utility.h"
 #include <stdlib.h>
 #include <assert.h> /* TODO #DEFINE NDEBUG */
 #include <stdio.h> /* TODO remove for release */
@@ -27,7 +28,7 @@ static void* OC_bsearch( const struct Ordered_container* c_ptr, OC_comp_fp_t f_p
 
 struct Ordered_container* OC_create_container(OC_comp_fp_t f_ptr)
 {
-    struct Ordered_container* new_container = malloc( sizeof( struct Ordered_container ) );
+    struct Ordered_container* new_container = safe_malloc( sizeof( struct Ordered_container ) );
     
     init_Order_containter( new_container );
     new_container->comp_fun = f_ptr;
@@ -206,7 +207,7 @@ static void OC_grow( struct Ordered_container* c_ptr )
     void** new_array;
     
     new_allocation = 2 * ( c_ptr->allocation + 1 );
-    new_array = malloc( sizeof( void* ) * new_allocation );
+    new_array = safe_malloc( sizeof( void* ) * new_allocation );
     
     /* copy over the memory */
     copy_array( c_ptr->array, new_array, c_ptr->size );
@@ -221,7 +222,7 @@ static void OC_grow( struct Ordered_container* c_ptr )
 
 static void init_Order_containter( struct Ordered_container* c_ptr )
 {
-    c_ptr->array = malloc( sizeof( void* ) * DEFAULT_ALLOCATION );
+    c_ptr->array = safe_malloc( sizeof( void* ) * DEFAULT_ALLOCATION );
     c_ptr->size = 0;
     c_ptr->allocation = DEFAULT_ALLOCATION;
     
