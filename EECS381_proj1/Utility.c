@@ -77,7 +77,7 @@ static void remove_white_space( char* c_str )
 }
 
 /* loads int a title from a file the c_str title is required to have enough space alloc
- returns true if read success full, false if otherwize */
+ returns 0 if read success full, nonzero if otherwize */
 int get_title( FILE* infile, char* title)
 {
     fgets( title, TITLE_ARRAY_SIZE, infile ) ;

@@ -103,11 +103,14 @@ struct Record* load_Record(FILE* infile)
     if ( fscanf( infile, "%d %" STRINGIFY( MEDIUM_MAX_SIZE )"s %d",
                 &ID, medium, &rating ) != 3 )
     {
+        printf( "%d %s\n", ID, medium );
+        assert( 0 );
         /* throw an error */
         return NULL;
     }
     if ( get_title( infile, title ) ) {
         /* throw an error */
+        assert( 0 );
         return NULL;
     }
     

@@ -21,14 +21,6 @@
 #define MAX_RATING 5
 #define MIN_RATING 1
 
-/* typedef for function ptr for convinence */
-typedef void* (*Node_or_Data_t)( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp,
-                                        void* data_ptr, enum Error_e err ) ;
-
-typedef int (*Collection_fptr_t)(struct Collection* collection_ptr, const struct Record* record_ptr);
-
-typedef void* (*load_fptr_t)( FILE* in_file, struct Ordered_container* c_ptr );
-
 /*
  *
  *  Function Declarations
@@ -57,11 +49,9 @@ static void print_containter( struct Ordered_container* c_ptr, char* type, char*
 static void print_allocation( struct Ordered_container* lib_title, struct Ordered_container* lib_ID,
                               struct Ordered_container* catalog);
 
+static void remove_member( struct Ordered_container* lib_ID, struct Ordered_container* catalog );
+static void add_member( struct Ordered_container* lib_ID, struct Ordered_container* catalog );
 
-/* reads in a <name> <ID> and applies function pointer to that Container */
-/* used for add and delete */
-static void apply_collection_func( struct Ordered_container* lib_ID, struct Ordered_container* catalog,
-                                   Collection_fptr_t fp, char* action, enum Error_e err );
 
 static void modify_rating( struct Ordered_container* lib_ID );
 
@@ -105,7 +95,7 @@ static void find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t 
 
 /* reads the name in from stdin and finds the collection assosiated with that 
  * if there isn't one prints and error and returns NULL */ 
-static struct Collection* find_collection_by_name( struct Ordered_container* catalog, Node_or_Data_t fp );
+static void* find_collection_by_name( struct Ordered_container* catalog );
 
 
 
@@ -222,7 +212,7 @@ int main( void )
                         add_coll( catalog );
                         break;
                     case 'm':
-                        apply_collection_func( lib_ID , catalog, add_Collection_member,  "added", IN_COLL );
+                        add_member( lib_ID , catalog );
                         break;
                     case 'a': /* allocation */
                         /* throw error */
@@ -242,7 +232,7 @@ int main( void )
                         delete_collection( catalog );
                         break;
                     case 'm':
-                         apply_collection_func( lib_ID , catalog, remove_Collection_member, "deleted", NOT_IN_COLL );
+                         remove_member( lib_ID , catalog );
                         break;
                     case 'a': /* allocation */
                         /* throw error */
@@ -524,19 +514,19 @@ static void add_coll( struct Ordered_container* catalog )
 
 /* reads in a name from stdin and returns the collection assosiated with it
    returns NULL and throws an error if there wasn't any collection by that name */
-static struct Collection* find_collection_by_name( struct Ordered_container* catalog, Node_or_Data_t fp )
+static void* find_collection_by_name( struct Ordered_container* catalog )
 {
     char name[ NAME_ARRAY_SIZE ];
     
     read_name( name );
     
-    return fp( catalog, comp_Collection_to_name, name, NOT_FOUND_COLL );
+    return get_node( catalog, comp_Collection_to_name, name, NOT_FOUND_COLL );
 }
 
 
 static void print_collection_main( struct Ordered_container* catalog )
 {
-    struct Collection* coll = find_collection_by_name( catalog, get_data_ptr );
+    struct Collection* coll = OC_get_data_ptr( find_collection_by_name( catalog ) );
     
     if ( coll != NULL  )
     {
@@ -546,7 +536,7 @@ static void print_collection_main( struct Ordered_container* catalog )
 
 static void delete_collection( struct Ordered_container* catalog )
 {
-    void* node = find_collection_by_name( catalog, get_node );
+    void* node = find_collection_by_name( catalog );
     
     if ( node != NULL  )
     {
@@ -588,16 +578,14 @@ static void modify_rating( struct Ordered_container* lib_ID )
     }
 }
 
+/* I had these two functions implemented with function pointers but I broke them up according to spec */
 
-
-/* reads in a <name> <ID> and applies function pointer to that Container */
-/* used for add and delete */
-static void apply_collection_func( struct Ordered_container* lib_ID, struct Ordered_container* catalog, Collection_fptr_t fp, char* action, enum Error_e err )
+static void remove_member( struct Ordered_container* lib_ID, struct Ordered_container* catalog )
 {
     int ID;
     struct Record* rec;
     /* load the collection */
-    struct Collection* coll = find_collection_by_name( catalog, get_data_ptr );
+    struct Collection* coll = OC_get_data_ptr( find_collection_by_name( catalog ) );
     
     /* check for read errors  */
     if ( coll && read_int( &ID ) )
@@ -607,20 +595,48 @@ static void apply_collection_func( struct Ordered_container* lib_ID, struct Orde
         /* make sure there is a record with that ID */
         if ( rec )
         {
-            if ( !fp( coll, rec ) )
+            if ( !remove_Collection_member( coll, rec ) )
             {
                 /* if it was sucsess full print out the action and what it was applied to */
-                printf("Member %d %s %s\n", ID, get_Record_title( rec ), action );
+                printf("Member %d %s deleted\n", ID, get_Record_title( rec ) );
             }
             else
             {
-                print_error( err );
+                print_error( NOT_IN_COLL );
             }
             
         }
     }
 }
 
+
+static void add_member( struct Ordered_container* lib_ID, struct Ordered_container* catalog )
+{
+    int ID;
+    struct Record* rec;
+    /* load the collection */
+    struct Collection* coll = OC_get_data_ptr( find_collection_by_name( catalog ) );
+    
+    /* check for read errors  */
+    if ( coll && read_int( &ID ) )
+    {
+        
+        rec = get_data_ptr( lib_ID, comp_Record_to_ID, &ID, NOT_FOUND_ID );
+        /* make sure there is a record with that ID */
+        if ( rec )
+        {
+            if ( !add_Collection_member( coll, rec ) )
+            {
+                /* if it was sucsess full print out the action and what it was applied to */
+                printf("Member %d %s added\n", ID, get_Record_title( rec ) );
+            }
+            else
+            {
+                print_error( NOT_IN_COLL );
+            }
+        }
+    }
+}
 
 
 /*
@@ -728,65 +744,76 @@ static void save_all_to_file( struct Ordered_container* lib_title, struct Ordere
     }
 }
 
-
-/* attempts to load data in from the given file returns true if there are no errors 
-    returns false if a read error occurs */
-static int load_container( struct Ordered_container* c_ptr, struct Ordered_container* r_ptr, load_fptr_t load, FILE* in_file )
-{
-    int i, num;
-    void* data_ptr;
-    
-    /* read in the number of things to load */
-    if( fscanf( in_file, "%d", &num ) != 1 )
-    {
-        
-        print_error( INVAL_DATA );
-        return 0;
-    }
-    
-    /* load the data */
-    for ( i = 0; i < num; ++i )
-    {
-        data_ptr = load( in_file, r_ptr );
-        
-        if ( data_ptr == NULL )
-        {
-            print_error( INVAL_DATA );
-            return 0;
-        }
-        
-        OC_insert( c_ptr, data_ptr );
-    }
-    
-    return 1;
-}
-
-
-void* load_rec( FILE* in_file, struct Ordered_container* r_ptr )
-{
-    struct Record* rec = load_Record( in_file ); 
-    if ( rec )
-    {
-        OC_insert( r_ptr, rec );
-    }
-
-    return rec; 
-}
-
 static void load_from_file( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog )
 {
     FILE* in_file = read_open_file( "r" );
     
     if ( in_file ) 
     {
+        int i, num;
         clear_all( lib_title, lib_ID, catalog, "" );
         
+        /* read in the number of things to load */
+        if( fscanf( in_file, "%d", &num ) != 1 )
+        {
+            assert( 0 );
+            print_error( INVAL_DATA );
+            return ;
+        }
+        
+        /* load the data */
+        for ( i = 0; i < num; ++i )
+        {
+            struct Record* rec = load_Record( in_file );
+            
+            if ( rec )
+            {
+                int arg = get_Record_ID( rec );
+                if ( OC_find_item_arg( lib_ID, &arg , comp_Record_to_ID ) != NULL )
+                {
+                    assert(0);
+                    clear_all( lib_title, lib_ID, catalog, "" );
+                    print_error( INVAL_DATA );
+                    return;
+                }
+                OC_insert( lib_ID, rec );
+                OC_insert( lib_title, rec);
+            }
+            else
+            {
+                assert(0);
+                clear_all( lib_title, lib_ID, catalog, "" );
+                print_error( INVAL_DATA );
+                return;
+            }
+        }
+        
+        /* read in the number of things to load */
+        if( fscanf( in_file, "%d", &num ) != 1 )
+        {
+            assert( 0 );
+            print_error( INVAL_DATA );
+            return ;
+        }
+        
+        
         /* load the data in from the file */
-        if( !load_container( lib_title, lib_ID, (load_fptr_t)load_rec , in_file ) )
-            return;
-
-        if( !load_container( catalog, lib_title, (load_fptr_t)load_Collection, in_file ) )
-            return;
+        for ( i = 0 ; i < num ; ++i )
+        {
+            struct Collection* coll = load_Collection( in_file, lib_title );
+            
+            if ( coll )
+            {
+                OC_insert( catalog, coll );
+            }
+            else
+            {
+                assert(0);
+                clear_all( lib_title, lib_ID, catalog, "" );
+                print_error( INVAL_DATA );
+                return;
+            }
+        }
         
         printf( "Data loaded\n" );
         fclose( in_file );
@@ -796,7 +823,7 @@ static void load_from_file( struct Ordered_container* lib_title, struct Ordered_
 
 /*
  *
- *  function to read in
+ *  Function to read in
  *
  */
 
