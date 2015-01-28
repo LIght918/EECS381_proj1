@@ -526,11 +526,11 @@ static void* find_collection_by_name( struct Ordered_container* catalog )
 
 static void print_collection_main( struct Ordered_container* catalog )
 {
-    struct Collection* coll = OC_get_data_ptr( find_collection_by_name( catalog ) );
+    void* coll =  find_collection_by_name( catalog );
     
     if ( coll != NULL  )
     {
-        print_Collection( coll );
+        print_Collection( OC_get_data_ptr( coll ) );
     }
 }
 
