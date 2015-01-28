@@ -42,7 +42,10 @@ test: $(EX_L) $(EX_A)
 	diff test_output/testL_out.txt test_output/normalL_out.txt
 	./p1Aexe <test_files/normal_in.txt >test_output/testA_out.txt
 	diff test_output/testA_out.txt test_output/normalA_out.txt	
-
+	./p1Lexe <test_files/typeahead_in.txt >test_output/testL_type.txt
+	diff test_output/testL_type.txt test_output/typeahead_out.txt
+	./p1Aexe <test_files/typeahead_in.txt >test_output/testL_type.txt
+	diff test_output/testL_type.txt test_output/typeahead_out.txt
 
 # to build this executable, check to see if any of the listed object files
 # need to be rebuilt and do so, then link to create the executable

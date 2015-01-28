@@ -138,9 +138,6 @@ void* OC_find_item_arg(const struct Ordered_container* c_ptr, const void* arg_pt
 {
     void* node = OC_bsearch(c_ptr, fafp, arg_ptr );
     
-    if ( !node ) {
-        printf( "node null\n" ); 
-    }
     return node;
 }
 
@@ -297,7 +294,7 @@ static void* OC_bsearch( const struct Ordered_container* c_ptr, OC_comp_fp_t f_p
     
     if ( OC_empty( c_ptr ) )
     {
-        return c_ptr->array;
+        return NULL;
     }
     
     right = c_ptr->size - 1;

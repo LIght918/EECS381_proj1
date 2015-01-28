@@ -162,57 +162,57 @@ void print_error( enum error err  )
     switch ( err ) {
         case COMMAND:
             clear_line();
-            fprintf( stderr, "Unrecognized command!\n");
+            fprintf( stdout, "Unrecognized command!\n");
             break;
         case DUPLICATE_REC:
-            fprintf( stderr, "Library already has a record with this title!\n" );
+            fprintf( stdout, "Library already has a record with this title!\n" );
             break;
         case DUPLICATE_COLL:
-            fprintf( stderr,"Catalog already has a collection with this name!\n");
+            fprintf( stdout,"Catalog already has a collection with this name!\n");
             break;
         case IN_COLL:
-            fprintf( stderr,"Record is already a member in the collection!\n");
+            fprintf( stdout,"Record is already a member in the collection!\n");
             break;
         case NOT_IN_COLL:
-            fprintf( stderr,"Record is not a member in the collection!\n");
+            fprintf( stdout,"Record is not a member in the collection!\n");
             break;
         case CANT_DELETE:
-            fprintf( stderr,"Cannot delete a record that is a member of a collection!\n");
+            fprintf( stdout,"Cannot delete a record that is a member of a collection!\n");
             break;
         case CLEAR_COLL:
-            fprintf( stderr,"Cannot clear all records unless all collections are empty!\n");
+            fprintf( stdout,"Cannot clear all records unless all collections are empty!\n");
             break;
         case NOT_FOUND_TITLE:
-            fprintf( stderr,"No record with that title!\n");
+            fprintf( stdout,"No record with that title!\n");
             break;
         case NOT_FOUND_ID:
-            fprintf( stderr,"No record with that ID!\n");
+            fprintf( stdout,"No record with that ID!\n");
             break;
         case NOT_FOUND_COLL:
-            fprintf( stderr,"No collection with that name!\n");
+            fprintf( stdout,"No collection with that name!\n");
             break;
         case READ_TITLE:
-            fprintf( stderr,"Could not read a title!\n");
+            fprintf( stdout,"Could not read a title!\n");
             break;
         case READ_INT:
             clear_line();
-            fprintf( stderr,"Could not read an integer value!\n");
+            fprintf( stdout,"Could not read an integer value!\n");
             break;
         case RATING_RANGE:
-            fprintf( stderr, "Rating is out of range!\n");
+            fprintf( stdout, "Rating is out of range!\n");
             break;
         case FILE_OPEN:
-            fprintf( stderr,"Could not open file!\n");
+            fprintf( stdout,"Could not open file!\n");
             break;
         case INVAL_DATA:
-            fprintf( stderr,"Invalid data found in file!\n");
+            fprintf( stdout,"Invalid data found in file!\n");
             break;
         case NONE:
             break; 
         case ASSERT:
             assert(0); /* should cascade on NDEBUG */ 
         default:
-            fprintf( stderr, "Error Unknow\n" );
+            fprintf( stdout, "Error Unknow\n" );
             break;
     }
 }

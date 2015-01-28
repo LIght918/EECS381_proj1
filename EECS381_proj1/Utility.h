@@ -16,7 +16,7 @@
 #define NAME_MAX_SIZE 15
 #define MEDIUM_MAX_SIZE 7
 #define FILENAME_MAX_SIZE 31
-#define TITLE_MAX_BUFF_SIZE 64
+#define TITLE_MAX_BUFF_SIZE 63
 
 /* array sizes */
 #define NAME_ARRAY_SIZE      NAME_MAX_SIZE + 1

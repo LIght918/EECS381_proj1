@@ -63,10 +63,13 @@ static int get_medium_and_title( char* medium, char* title );
 
 /* print the record with that is equal to the data_ptr */
 static void print_rec( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err  );
+
 /* find the record assosiated with that data_ptr and remove it */ 
 static void find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum error err );
+
 /* returns true if the record is in the catalog */ 
 static int is_rec_in_catalog( void* data_ptr, void* arg_ptr);
+
 /* reads the name in from stdin and finds the collection assosiated with that 
  * if there isn't one prints and error and returns NULL */ 
 static struct Collection* find_collection_by_name( struct Ordered_container* catalog, Node_or_Data fp );
@@ -75,6 +78,7 @@ static int read_int( int* num );
 static void read_name( char* name );
 static FILE* read_open_file( const char* mode );
 
+/* use as a function pointer */
 void* load_rec( FILE* in_file, struct Ordered_container* c_ptr );
 
 
@@ -86,8 +90,6 @@ int main( void )
     struct Ordered_container* catalog   = OC_create_container( comp_Collection_by_name );
     int i;
     
-    /*char first_c, second_c = '\0';
-    char buffer[ TITLE_ARRAY_SIZE ];*/
     char command[ 3 ];
     
     /* end the string with the null term*/
@@ -123,14 +125,10 @@ int main( void )
                 switch ( command[ 1 ] )
                 {
                     case 'r' :
-                        print_record( lib_title );
+                        print_record( lib_ID );
                         break;
                     case 'L':
-                        /*print_lib( lib_title );*/
-                        /*printf("%s\n", "titles: ");*/
                         print_containter( lib_title, "Library", "records", (void (*)(void*))print_Record );
-                        /*printf("%s\n", "ID's: ");
-                        print_containter( lib_ID, "Library", "records", (void (*)(void*))print_Record );*/
                         break;
                     case 'C':
                         /* print_catalog( catalog ); */
