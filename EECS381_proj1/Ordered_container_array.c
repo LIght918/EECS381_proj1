@@ -1,13 +1,10 @@
-/* skeleton file for Ordered_container_array.c
-The struct declaration below must be used for the Ordered_container object.
-Remove this comment and complete this file with all necessary code.
-*/
 
 #include "Ordered_container.h"
 #include "Utility.h"
 #include <stdlib.h>
-#include <assert.h> /* TODO #DEFINE NDEBUG */
-#include <stdio.h> /* TODO remove for release */
+#define NDEBUG
+#include <assert.h> 
+
 
 #define DEFAULT_ALLOCATION 3
 
@@ -129,7 +126,6 @@ void OC_insert(struct Ordered_container* c_ptr, const void* data_ptr)
     /* move the right part of the subarray on place to the right */
     for ( i = 0; i < size_subarray; ++i )
     {
-        /* fix this line */ 
         c_ptr->array[ c_ptr->size - i ] = c_ptr->array[ c_ptr->size - 1 - i ];
     }
     
@@ -206,12 +202,17 @@ int OC_apply_if_arg(const struct Ordered_container* c_ptr, OC_apply_if_arg_fp_t 
     return 0;
 }
 
-/* Helper functions */
+/*
+ *  Helper functions
+ */
+
+
 static void OC_grow( struct Ordered_container* c_ptr )
 {
     int new_allocation;
     void** new_array;
     
+    /* create a new array with double the size we currently need */
     new_allocation = 2 * ( c_ptr->allocation + 1 );
     new_array = safe_malloc( sizeof( void* ) * new_allocation );
     
@@ -221,6 +222,9 @@ static void OC_grow( struct Ordered_container* c_ptr )
     /* take care of global */
     g_Container_items_allocated += new_allocation - c_ptr->allocation;
     
+    /* we dont need the old array any more */
+    free( c_ptr->array );
+    
     c_ptr->array = new_array;
     c_ptr->allocation = new_allocation;
 }
@@ -228,10 +232,12 @@ static void OC_grow( struct Ordered_container* c_ptr )
 
 static void init_Order_containter( struct Ordered_container* c_ptr )
 {
-    c_ptr->array = safe_malloc( sizeof( void* ) * DEFAULT_ALLOCATION );
+    /* set the values to their default values */
     c_ptr->size = 0;
     c_ptr->allocation = DEFAULT_ALLOCATION;
     
+    c_ptr->array = safe_malloc( sizeof( void* ) * DEFAULT_ALLOCATION );
+
     /* keep track of allocation */
     g_Container_items_allocated += DEFAULT_ALLOCATION;
 }
@@ -244,6 +250,7 @@ static void** OC_search( const struct Ordered_container* c_ptr, OC_comp_fp_t f_p
     
     if ( OC_empty( c_ptr ) )
     {
+        /* if its empty just retrun the first element in the array */
         return c_ptr->array;
     }
     
@@ -256,21 +263,21 @@ static void** OC_search( const struct Ordered_container* c_ptr, OC_comp_fp_t f_p
         mid = ( right + left ) / 2 ;
         
         com_value = f_ptr( arg_ptr, c_ptr->array[ mid ] );
-        if ( left == mid )
-        {
-            if ( com_value < 0 ) {
-                return c_ptr->array + mid ;
-            }
-        }
         
         if ( com_value > 0 ) {
-            left = mid + 1;
+            
+            left = mid + 1 ;
+            
             if ( left > right ) {
                 return c_ptr->array + mid + 1;
             }
         }
         else
         {
+            if ( left == mid )
+            {
+                return c_ptr->array + mid ;
+            }
             right = mid - 1;
         }
         

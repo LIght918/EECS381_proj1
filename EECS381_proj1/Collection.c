@@ -11,11 +11,9 @@
 #include "Utility.h"
 #include "Record.h"
 #include <stdlib.h>
-#include <string.h>
 #define NDEBUG
 #include <assert.h>
 #include <stdio.h>
-/* #define NDEBUG */ /* include that on release */ 
 
 
 static void print_record_title(const struct Record* record_ptr, FILE* outfile );
@@ -98,7 +96,7 @@ void print_Collection(const struct Collection* collection_ptr)
     
     if ( OC_empty( collection_ptr->members ) )
     {
-        /* if empty print none */ 
+        /* if empty print None */
         printf(" None" );
     }
     
@@ -123,16 +121,14 @@ struct Collection* load_Collection(FILE* input_file, const struct Ordered_contai
     char title[ TITLE_MAX_BUFF_SIZE ];
     int  i, num_records;
     struct Collection* new_collection;
-    void* cur_record = NULL;
+    struct Record* cur_record = NULL;
     
-    /* read in the name of the collection and the number of records*/
+    /* read in the name of the collection and the number of records
+       reads in the new line so first title can be read             */
     if ( fscanf( input_file, "%" STRINGIFY( NAME_MAX_SIZE )"s %d\n", name, &num_records ) != 2 )
     {
         return NULL;
     }
-    
-    /* read int the new line */ 
-    /* fgetc( input_file ); */
     
     new_collection = create_Collection( name );
     
@@ -147,7 +143,7 @@ struct Collection* load_Collection(FILE* input_file, const struct Ordered_contai
         
         
         
-        cur_record = get_data_ptr((struct Ordered_container*)records, comp_Record_to_title, title );
+        cur_record = get_data_ptr( (struct Ordered_container*)records, comp_Record_to_title, title );
         
         /* read in the title and then check if it is in records */
         if (  cur_record == NULL  || is_Collection_member_present( new_collection,  cur_record ) )

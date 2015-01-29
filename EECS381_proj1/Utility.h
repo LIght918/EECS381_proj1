@@ -42,14 +42,12 @@ int get_title( FILE* infile, char* title);
 /* uses strcmp on the title of each record and returns the value */
 int comp_Record_by_title( const void* left, const void* right );
 
-/* uses < on the ID values of each records */
-int comp_Record_by_ID( const void* left, const void* right );
+
 
 /* compares a record to a title returns ture if equal */ 
 int comp_Record_to_title(const void* arg_ptr, const void* data_ptr);
 
-/* compars a record to a ID, int value returns true if equal */
-int comp_Record_to_ID( const void* arg_ptr, const void* data_ptr );
+
 
 /* allocate memory and copy the src string to it */
 char* alloc_and_copy( const char* src );

@@ -1,14 +1,9 @@
 #include "Ordered_container.h"
 #include "Utility.h"
 #include <stdlib.h>
-#include <assert.h> /* TODO remove for release */
+#define NDEBUG
+#include <assert.h>
 #include <stdio.h>
-
-/* skeleton file for Ordered_container_list.c
-The struct declarations below must be used for the linked-list node and Ordered_container objects.
-Remove this comment and complete this file with all necessary code.
-*/
-
 
 /* struct LL_Node structure declaration. This declaration is local to this file. 
 This is a two-way or doubly-linked list. Each node has a pointer to the previous 

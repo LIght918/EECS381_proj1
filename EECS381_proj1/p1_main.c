@@ -131,7 +131,11 @@ static int comp_Collection_to_name(const void* arg_ptr, const void* data_ptr );
 /* returns the inverse of empty */
 static int is_Collection_not_empty( void* data_ptr );
 
+/* compars a record to a ID, int value returns true if equal */
+int comp_Record_to_ID( const void* arg_ptr, const void* data_ptr );
 
+/* uses < on the ID values of each records */
+int comp_Record_by_ID( const void* left, const void* right );
 
 
 int main( void )
@@ -804,7 +808,7 @@ static void load_from_file( struct Ordered_container* lib_title, struct Ordered_
         int i, num;
         clear_all( lib_title, lib_ID, catalog, "" );
         
-        /* read in the number of things to load */
+        /* read in the number of Records to load */
         if( fscanf( in_file, "%d", &num ) != 1 )
         {
             clear_all( lib_title, lib_ID, catalog, "" );
@@ -819,17 +823,7 @@ static void load_from_file( struct Ordered_container* lib_title, struct Ordered_
             
             if ( rec )
             {
-                int arg = get_Record_ID( rec );
-                const char* name = get_Record_title( rec );
-                
-                if ( OC_find_item_arg( lib_ID, &arg , comp_Record_to_ID ) != NULL
-                    || OC_find_item_arg( lib_title, name, comp_Record_to_title ) != NULL )
-                {
-                    clear_all( lib_title, lib_ID, catalog, "" );
-                    print_error( "Invalid data found in file!\n" );
-                    return;
-                }
-                
+                /* if record was loaded correctly instert it */
                 OC_insert( lib_ID, rec );
                 OC_insert( lib_title, rec);
             }
@@ -913,5 +907,15 @@ static int comp_Collection_to_name(const void* arg_ptr, const void* data_ptr )
 static int is_Collection_not_empty( void* data_ptr )
 {
     return !Collection_empty( ( struct Collection* ) data_ptr );
+}
+
+int comp_Record_by_ID( const void* left, const void* right )
+{
+    return get_Record_ID( (struct Record* )left ) < get_Record_ID( (struct Record* )right );
+}
+
+int comp_Record_to_ID( const void* arg_ptr, const void* data_ptr )
+{
+    return ( get_Record_ID( (struct Record* )data_ptr ) -  *( (int*) arg_ptr ) );
 }
 

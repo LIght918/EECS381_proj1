@@ -19,8 +19,6 @@
 
 extern int g_string_memory; 
 
-static void str_cpy(char *dst, const char* src );
-
 /* removes redundent white space from the given string */
 static void remove_white_space( char* c_str );
 
@@ -74,7 +72,7 @@ static void remove_white_space( char* c_str )
     str_copy[ ++i ] = '\0';
     
     /* copy the mem back over into the starting location */
-    str_cpy( front_c_str, (char * )str_copy );
+    strcpy( front_c_str, (char * )str_copy );
 }
 
 /* loads int a title from a file the c_str title is required to have enough space alloc
@@ -85,22 +83,6 @@ int get_title( FILE* infile, char* title)
     remove_white_space( title );
 
     return ( strlen( title ) <= 0 ) || !val ;
-}
-
-/* copies string from src to dst */
-/* standard version wasn't working with an array */
-/* TODO see if can be removed */ 
-static void str_cpy(char *dst, const char* src )
-{
-    int i = 0;
-    assert( src );
-    assert( dst );
-    
-    while ( src[ i ] != '\0')
-    {
-        *dst++ = src[ i++ ];
-    }
-    *dst = '\0';
 }
 
 int comp_Record_by_title( const void* left, const void* right )
@@ -117,17 +99,6 @@ int comp_Record_to_title(const void* arg_ptr, const void* data_ptr)
 
 	return strcmp( (char*) arg_ptr, get_Record_title( (struct Record* )data_ptr) ); 
 }
-
-int comp_Record_by_ID( const void* left, const void* right )
-{
-    return get_Record_ID( (struct Record* )left ) < get_Record_ID( (struct Record* )right );
-}
-
-int comp_Record_to_ID( const void* arg_ptr, const void* data_ptr )
-{
-    return ( get_Record_ID( (struct Record* )data_ptr ) -  *( (int*) arg_ptr ) );
-}
-
 
 /* allocates memory and copyes the src string into that
  * and keeps track of the global allocations
