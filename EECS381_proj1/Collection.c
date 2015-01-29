@@ -128,6 +128,7 @@ struct Collection* load_Collection(FILE* input_file, const struct Ordered_contai
     /* read in the name of the collection and the number of records*/
     if ( fscanf( input_file, "%" STRINGIFY( NAME_MAX_SIZE )"s %d\n", name, &num_records ) != 2 )
     {
+        printf("bad input\n" );
         assert(0);
         return NULL;
     }
@@ -149,9 +150,9 @@ struct Collection* load_Collection(FILE* input_file, const struct Ordered_contai
         
         
         cur_record = get_data_ptr((struct Ordered_container*)records, comp_Record_to_title, title );
-
+        
         /* read in the title and then check if it is in records */
-        if (  cur_record == NULL   )
+        if (  cur_record == NULL  || is_Collection_member_present( new_collection,  cur_record ) )
         {
             /* if given bad input clean up mem and return NULL */
             destroy_Collection( new_collection );

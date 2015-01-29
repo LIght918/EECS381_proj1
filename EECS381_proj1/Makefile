@@ -96,3 +96,11 @@ real_clean:
 reset:
 	rm -f savefile1.txt
 	wget http://www.umich.edu/~eecs381/proj1/project1/samples/savefile1.txt
+
+git:
+	make clean
+	git add . 
+	git commit -m "shrug"
+	git push
+
+

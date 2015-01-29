@@ -81,10 +81,10 @@ static void remove_white_space( char* c_str )
  returns 0 if read success full, nonzero if otherwize */
 int get_title( FILE* infile, char* title)
 {
-    fgets( title, TITLE_ARRAY_SIZE, infile ) ;
+    char* val = fgets( title, TITLE_ARRAY_SIZE, infile ) ;
     remove_white_space( title );
 
-    return  strlen( title ) <= 0 ;
+    return ( strlen( title ) <= 0 ) || !val ;
 }
 
 /* copies string from src to dst */

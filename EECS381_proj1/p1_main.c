@@ -842,7 +842,6 @@ static void load_from_file( struct Ordered_container* lib_title, struct Ordered_
             return ;
         }
         
-        
         /* load the data in from the file */
         for ( i = 0 ; i < num ; ++i )
         {
@@ -860,7 +859,6 @@ static void load_from_file( struct Ordered_container* lib_title, struct Ordered_
                 return;
             }
         }
-        
         
         printf( "Data loaded\n" );
         fclose( in_file );
