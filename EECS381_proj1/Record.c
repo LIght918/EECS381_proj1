@@ -7,10 +7,11 @@
 */
 
 #include "Record.h"
-#include "Utility.h"/* holds the macros */
+#include "Utility.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#define NDEBUG
 #include <assert.h>
 
 /* skeleton file for Record.c
@@ -104,13 +105,11 @@ struct Record* load_Record(FILE* infile)
                 &ID, medium, &rating ) != 3 )
     {
         printf( "%d %s\n", ID, medium );
-        assert( 0 );
         /* throw an error */
         return NULL;
     }
     if ( get_title( infile, title ) ) {
         /* throw an error */
-        assert( 0 );
         return NULL;
     }
     

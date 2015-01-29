@@ -12,6 +12,7 @@
 #include "Utility.h"
 #include "Record.h"
 #include "p1_globals.h"
+#define NDEBUG
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -86,10 +87,10 @@ static char get_command_char( void );
 static int get_medium_and_title( char* medium, char* title );
 
 /* print the record with that is equal to the data_ptr */
-static void print_rec( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum Error_e err  );
+static void print_rec( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, char* err_message  );
 
 /* find the record assosiated with that data_ptr and remove it */ 
-static void find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum Error_e err );
+static int find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr );
 
 
 
@@ -97,6 +98,7 @@ static void find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t 
  * if there isn't one prints and error and returns NULL */ 
 static void* find_collection_by_name( struct Ordered_container* catalog );
 
+static void print_error_clear( char* message );
 
 
 /* 
@@ -163,7 +165,7 @@ int main( void )
                         find_record_print( lib_title );
                         break;
                     default:
-                        print_error( COMMAND );
+                        print_error_clear( "Unrecognized command!\n");
                         break;
                 }
                 break;
@@ -187,7 +189,7 @@ int main( void )
                         print_collection_main( catalog );
                         break;
                     default:
-                        print_error( COMMAND );
+                        print_error_clear( "Unrecognized command!\n");
                         break;
                 }
                 break;
@@ -198,7 +200,7 @@ int main( void )
                         modify_rating( lib_ID );
                         break;
                     default:
-                        print_error( COMMAND );
+                        print_error_clear( "Unrecognized command!\n");
                         break;
                 }
                 break;
@@ -216,7 +218,7 @@ int main( void )
                         break;
                     case 'a': /* allocation */
                         /* throw error */
-                        print_error( COMMAND );
+                        print_error_clear( "Unrecognized command!\n");
                         break;
                     default:
                         break;
@@ -238,7 +240,7 @@ int main( void )
                         /* throw error */
                         break;
                     default:
-                        print_error( COMMAND );
+                        print_error_clear( "Unrecognized command!\n");
                         break;
                 }
                 break;
@@ -255,7 +257,7 @@ int main( void )
                         clear_all(lib_title, lib_ID, catalog, "All data deleted\n" );
                         break;
                     default:
-                        print_error( COMMAND );
+                        print_error_clear( "Unrecognized command!\n");
                         break;
                 }
                 break;
@@ -265,7 +267,7 @@ int main( void )
                         save_all_to_file( lib_title, catalog );
                         break;
                     default:
-                        print_error( COMMAND );
+                        print_error_clear( "Unrecognized command!\n");
                         break;
                 }
                 break;
@@ -275,7 +277,7 @@ int main( void )
                         load_from_file( lib_title, lib_ID, catalog );
                         break;
                     default:
-                        print_error( COMMAND );
+                        print_error_clear( "Unrecognized command!\n");
                         break;
                 }
                 break;
@@ -287,19 +289,29 @@ int main( void )
                         quit( lib_title, lib_ID, catalog );
                         break;
                     default:
-                        print_error( COMMAND );
+                        print_error_clear( "Unrecognized command!\n");
                         break;
                 }
             default:
                 /* throw error for bad input */
-                print_error( COMMAND );
+                print_error_clear( "Unrecognized command!\n");
                 break;
         }
     }
 	return 0;
 }
 
+/* print the error message and clears the stream */
+static void print_error_clear( char* message )
+{
+    fprintf( stdout, "%s", message );
+    clear_line();
+}
 
+static void print_error( char* message )
+{
+    fprintf( stdout, "%s", message );
+}
 
 static struct Record* find_record_by_title( struct Ordered_container* lib_title )
 {
@@ -308,21 +320,31 @@ static struct Record* find_record_by_title( struct Ordered_container* lib_title 
     
     if( get_title( stdin, title ) )
     {
-        print_error( READ_TITLE );
+        print_error( "Could not read an integer value!\n" );
         return NULL;
     }
     
-    rec = get_data_ptr( lib_title, comp_Record_to_title, title, NOT_FOUND_TITLE );
+    rec = get_data_ptr( lib_title, comp_Record_to_title, title );
+    
+    if ( rec == NULL )
+    {
+        print_error( "No record with that title!\n" );
+    }
     return rec;
 }
 
-static void print_rec( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum Error_e err  )
+static void print_rec( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, char* err_message  )
 {
-    struct Record* rec = get_data_ptr( c_ptr, fafp, data_ptr, err );
+    struct Record* rec = get_data_ptr( c_ptr, fafp, data_ptr );
+    
     
     if ( rec != NULL )
     {
         print_Record( rec );
+    }
+    else
+    {
+        print_error( err_message );
     }
 }
 
@@ -347,7 +369,7 @@ static void print_record( struct Ordered_container* lib_ID )
         return;
     }
     
-    print_rec( lib_ID, comp_Record_to_ID, &ID, NOT_FOUND_ID );
+    print_rec( lib_ID, comp_Record_to_ID, &ID, "No record with that ID!\n" );
 }
 
 
@@ -371,14 +393,14 @@ static void add_record( struct Ordered_container* lib_title, struct Ordered_cont
     /* read the record in from the command line */
     if ( !get_medium_and_title( medium, title ) )
     {
-        print_error( READ_TITLE );
+        print_error( "Could not read a title!\n" );
         return;
     }
     
     /* check if the Record already exsists */
     if ( OC_find_item_arg( lib_title, title , comp_Record_to_title ) != NULL )
     {
-        print_error( DUPLICATE_REC );
+        print_error( "Library already has a record with this title!\n" );
         return;
     }
     else
@@ -394,18 +416,19 @@ static void add_record( struct Ordered_container* lib_title, struct Ordered_cont
 /* remove the node assosiated with the data_ptr
  * if there is not record found print the error err
  * requires a OC_find_item_arg_fp_t fafp that returns true for the data_ptr given
+ * return 1 on succsess NULL if otherwise
  */
-static void find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum Error_e err )
+static int find_remove( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr )
 {
     void* node = OC_find_item_arg( c_ptr, data_ptr, fafp );
     
     if ( node == NULL )
     {
-        print_error( err );
-        return;
+        return 0 ;
     }
     
     OC_delete_item( c_ptr, node );
+    return 1;
 }
 
 static void delete_record( struct Ordered_container* lib_title, struct Ordered_container* lib_ID, struct Ordered_container* catalog )
@@ -419,9 +442,9 @@ static void delete_record( struct Ordered_container* lib_title, struct Ordered_c
         
         /* check to see if Record is in catalog 
            if so throw and error and return */
-        if( OC_apply_if_arg( catalog, (OC_apply_if_arg_fp_t) is_Collection_member_present, rec_to_remove ) )
+        if ( OC_apply_if_arg( catalog, (OC_apply_if_arg_fp_t) is_Collection_member_present, rec_to_remove ) )
         {
-            print_error( CANT_DELETE ) ;
+            print_error( "Cannot delete a record that is a member of a collection!\n" ) ;
             return ;
         }
         
@@ -429,8 +452,14 @@ static void delete_record( struct Ordered_container* lib_title, struct Ordered_c
         title = get_Record_title( rec_to_remove );
         
         /* remove from both libs */
-        find_remove( lib_title, comp_Record_to_title, (void*)title, NOT_FOUND_TITLE );
-        find_remove( lib_ID, comp_Record_to_ID, &ID, ASSERT );
+        if ( find_remove( lib_title, comp_Record_to_title, (void*)title ) )
+        {
+            find_remove( lib_ID, comp_Record_to_ID, &ID );
+        }
+        else
+        {
+            print_error( "No record with that title!\n" );
+        }
         
         printf("Record %d %s deleted\n", ID, title );
         
@@ -485,7 +514,7 @@ static int get_medium_and_title( char* medium, char* title )
 static void read_name( char* name )
 {
     /* puts the limit in the string literal */ 
-    if (scanf( "%" STRINGIFY( NAME_MAX_SIZE ) "s" , name ) != 1 )
+    if ( scanf( "%" STRINGIFY( NAME_MAX_SIZE ) "s" , name ) != 1 )
     {
         /* there shouldn't be an error but
          just to be safe */
@@ -502,7 +531,7 @@ static void add_coll( struct Ordered_container* catalog )
     
     if ( OC_find_item_arg( catalog, name, comp_Collection_to_name ) != NULL )
     {
-        print_error( DUPLICATE_COLL );
+        print_error( "Catalog already has a collection with this name!\n" );
         return;
     }
     
@@ -517,10 +546,17 @@ static void add_coll( struct Ordered_container* catalog )
 static void* find_collection_by_name( struct Ordered_container* catalog )
 {
     char name[ NAME_ARRAY_SIZE ];
+    void* node;
     
     read_name( name );
     
-    return get_node( catalog, comp_Collection_to_name, name, NOT_FOUND_COLL );
+    node = OC_find_item_arg( catalog, name, comp_Collection_to_name );
+    
+    if ( node == NULL ) {
+        print_error( "No collection with that name!\n" );
+    }
+    
+    return node;
 }
 
 
@@ -560,21 +596,24 @@ static void modify_rating( struct Ordered_container* lib_ID )
     {
         return;
     }
-    
-    /* make sure rating is in range */
-    if ( rating < MIN_RATING || rating > MAX_RATING )
-    {
-        print_error( RATING_RANGE );
-        return;
-    }
-    
-    rec = get_data_ptr( lib_ID, comp_Record_to_ID, &ID, NOT_FOUND_ID );
+
+    rec = get_data_ptr( lib_ID, comp_Record_to_ID, &ID );
     
     if ( rec )
     {
+        /* make sure rating is in range */
+        if ( rating < MIN_RATING || rating > MAX_RATING )
+        {
+            print_error( "Rating is out of range!\n" );
+            return;
+        }
+        
         printf( "Rating for record %d changed to %d\n", get_Record_ID(rec), rating );
         set_Record_rating( rec, rating );
-        
+    }
+    else
+    {
+        print_error( "No record with that ID!\n" );
     }
 }
 
@@ -591,7 +630,7 @@ static void remove_member( struct Ordered_container* lib_ID, struct Ordered_cont
     if ( coll && read_int( &ID ) )
     {
         
-        rec = get_data_ptr( lib_ID, comp_Record_to_ID, &ID, NOT_FOUND_ID );
+        rec = get_data_ptr( lib_ID, comp_Record_to_ID, &ID );
         /* make sure there is a record with that ID */
         if ( rec )
         {
@@ -602,9 +641,13 @@ static void remove_member( struct Ordered_container* lib_ID, struct Ordered_cont
             }
             else
             {
-                print_error( NOT_IN_COLL );
+                print_error( "Record is not a member in the collection!\n" );
             }
             
+        }
+        else
+        {
+            print_error( "No record with that ID!\n" );
         }
     }
 }
@@ -621,7 +664,8 @@ static void add_member( struct Ordered_container* lib_ID, struct Ordered_contain
     if ( coll && read_int( &ID ) )
     {
         
-        rec = get_data_ptr( lib_ID, comp_Record_to_ID, &ID, NOT_FOUND_ID );
+        rec = get_data_ptr( lib_ID, comp_Record_to_ID, &ID);
+        
         /* make sure there is a record with that ID */
         if ( rec )
         {
@@ -632,8 +676,12 @@ static void add_member( struct Ordered_container* lib_ID, struct Ordered_contain
             }
             else
             {
-                print_error( NOT_IN_COLL );
+                print_error( "Record is already a member in the collection!\n" );
             }
+        }
+        else
+        {
+            print_error( "No record with that ID!\n" );
         }
     }
 }
@@ -657,7 +705,7 @@ static void clear_library( struct Ordered_container* lib_title, struct Ordered_c
 {
     if ( strlen( output ) > 0 && OC_apply_if( catalog, is_Collection_not_empty ) )
     {
-        print_error( CLEAR_COLL );
+        print_error( "Cannot clear all records unless all collections are empty!\n" );
     }
     else
     {
@@ -713,22 +761,11 @@ static FILE* read_open_file( const char* mode )
     
     if ( new_file == NULL )
     {
-        print_error( FILE_OPEN );
+        print_error_clear( "Could not open file!\n" );
     }
     
     return new_file;
 }
-
-/*   save the collection by outputing the size and then the contents
- *   function takes a OC_apply_arg_fp_t that prints out what the container holds
- *   as well as a valid file pointer to read from
- */
-static void save_container( struct Ordered_container* c_ptr, OC_apply_arg_fp_t print, FILE* file )
-{
-    fprintf( file, "%d\n", OC_get_size( c_ptr ) );
-    OC_apply_arg( c_ptr, print , file );
-}
-
 
 static void save_all_to_file( struct Ordered_container* lib_title, struct Ordered_container* catalog)
 {
@@ -736,8 +773,12 @@ static void save_all_to_file( struct Ordered_container* lib_title, struct Ordere
     
     if ( out_file )
     {
-        save_container( lib_title, ( OC_apply_arg_fp_t ) save_Record, out_file );
-        save_container( catalog, (OC_apply_arg_fp_t) save_Collection, out_file );
+        
+        fprintf( out_file, "%d\n", OC_get_size( lib_title ) );
+        OC_apply_arg( lib_title, ( OC_apply_arg_fp_t )save_Record,  out_file );
+        
+        fprintf( out_file, "%d\n", OC_get_size( catalog ) );
+        OC_apply_arg( catalog, ( OC_apply_arg_fp_t )save_Collection, out_file );
         
         printf( "Data saved\n" );
         fclose( out_file );
@@ -757,7 +798,8 @@ static void load_from_file( struct Ordered_container* lib_title, struct Ordered_
         if( fscanf( in_file, "%d", &num ) != 1 )
         {
             assert( 0 );
-            print_error( INVAL_DATA );
+            clear_all( lib_title, lib_ID, catalog, "" );
+            print_error( "Invalid data found in file!\n" );
             return ;
         }
         
@@ -769,21 +811,24 @@ static void load_from_file( struct Ordered_container* lib_title, struct Ordered_
             if ( rec )
             {
                 int arg = get_Record_ID( rec );
-                if ( OC_find_item_arg( lib_ID, &arg , comp_Record_to_ID ) != NULL )
+                const char* name = get_Record_title( rec );
+                
+                if ( OC_find_item_arg( lib_ID, &arg , comp_Record_to_ID ) != NULL
+                    || OC_find_item_arg( lib_title, name, comp_Record_to_title ))
                 {
                     assert(0);
                     clear_all( lib_title, lib_ID, catalog, "" );
-                    print_error( INVAL_DATA );
+                    print_error( "Invalid data found in file!\n" );
                     return;
                 }
+                
                 OC_insert( lib_ID, rec );
                 OC_insert( lib_title, rec);
             }
             else
             {
-                assert(0);
                 clear_all( lib_title, lib_ID, catalog, "" );
-                print_error( INVAL_DATA );
+                print_error( "Invalid data found in file!\n" );
                 return;
             }
         }
@@ -792,7 +837,8 @@ static void load_from_file( struct Ordered_container* lib_title, struct Ordered_
         if( fscanf( in_file, "%d", &num ) != 1 )
         {
             assert( 0 );
-            print_error( INVAL_DATA );
+            clear_all( lib_title, lib_ID, catalog, "" );
+            print_error( "Invalid data found in file!\n" );
             return ;
         }
         
@@ -810,10 +856,11 @@ static void load_from_file( struct Ordered_container* lib_title, struct Ordered_
             {
                 assert(0);
                 clear_all( lib_title, lib_ID, catalog, "" );
-                print_error( INVAL_DATA );
+                print_error( "Invalid data found in file!\n" );
                 return;
             }
         }
+        
         
         printf( "Data loaded\n" );
         fclose( in_file );
@@ -835,7 +882,7 @@ static int read_int( int* num )
 {
     if ( scanf("%d", num ) != 1 )
     {
-        print_error( READ_INT );
+        print_error_clear( "Could not read an integer value!\n" );
         return 0;
     }
     return 1;

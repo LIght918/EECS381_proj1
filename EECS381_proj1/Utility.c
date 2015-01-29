@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define NDEBUG
 #include <assert.h>
 #include <ctype.h>
 
@@ -128,9 +129,6 @@ int comp_Record_to_ID( const void* arg_ptr, const void* data_ptr )
 }
 
 
-
-
-
 /* allocates memory and copyes the src string into that
  * and keeps track of the global allocations
  * returns NULL if there is a allocation error
@@ -166,73 +164,9 @@ void clear_line( void )
     fgets( buffp , TITLE_MAX_BUFF_SIZE, stdin );
 }
 
-
-/* print the corisponding error message to *
- * the error passed in                     */
-void print_error( enum Error_e err  )
+void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr )
 {
-    switch ( err ) {
-        case COMMAND:
-            fprintf( stdout, "Unrecognized command!\n");
-            clear_line();
-            break;
-        case DUPLICATE_REC:
-            fprintf( stdout, "Library already has a record with this title!\n" );
-            break;
-        case DUPLICATE_COLL:
-            fprintf( stdout,"Catalog already has a collection with this name!\n");
-            break;
-        case IN_COLL:
-            fprintf( stdout,"Record is already a member in the collection!\n");
-            break;
-        case NOT_IN_COLL:
-            fprintf( stdout,"Record is not a member in the collection!\n");
-            break;
-        case CANT_DELETE:
-            fprintf( stdout,"Cannot delete a record that is a member of a collection!\n");
-            break;
-        case CLEAR_COLL:
-            fprintf( stdout,"Cannot clear all records unless all collections are empty!\n");
-            break;
-        case NOT_FOUND_TITLE:
-            fprintf( stdout,"No record with that title!\n");
-            break;
-        case NOT_FOUND_ID:
-            fprintf( stdout,"No record with that ID!\n");
-            break;
-        case NOT_FOUND_COLL:
-            fprintf( stdout,"No collection with that name!\n");
-            break;
-        case READ_TITLE:
-            fprintf( stdout,"Could not read a title!\n");
-            break;
-        case READ_INT:
-            fprintf( stdout,"Could not read an integer value!\n");
-            clear_line();
-            break;
-        case RATING_RANGE:
-            fprintf( stdout, "Rating is out of range!\n");
-            break;
-        case FILE_OPEN:
-            fprintf( stdout,"Could not open file!\n");
-            clear_line();
-            break;
-        case INVAL_DATA:
-            fprintf( stdout,"Invalid data found in file!\n");
-            break;
-        case NONE: /* no error needs to be printed */
-            break; 
-        case ASSERT:
-            assert(0); /* should cascade on NDEBUG */ 
-        default:
-            fprintf( stdout, "Error Unknow\n" );
-            break;
-    }
-}
-
-void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum Error_e err )
-{
-    void* cur_node = get_node(c_ptr, fafp, data_ptr, err );
+    void* cur_node = OC_find_item_arg(c_ptr, data_ptr, fafp );
 
     if ( cur_node == NULL )
     {
@@ -241,24 +175,4 @@ void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp,
     
     return OC_get_data_ptr( cur_node );
 }
-
-void* get_node(struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum Error_e err )
-{
-    void* cur_node = OC_find_item_arg( c_ptr, data_ptr, fafp );
-    
-    if ( cur_node == NULL )
-    {
-        print_error( err );
-    }
-    
-    return cur_node;
-}
-
-/* init the static formated strings used for input to protect againts buffer overflow */ 
-char* init_global_fstring( char* input, int buffer_size )
-{
-	sprintf( input, "%%%ds", buffer_size );	
-	return input; 
-}
-
 

@@ -12,6 +12,7 @@
 #include "Record.h"
 #include <stdlib.h>
 #include <string.h>
+#define NDEBUG
 #include <assert.h>
 #include <stdio.h>
 /* #define NDEBUG */ /* include that on release */ 
@@ -140,7 +141,6 @@ struct Collection* load_Collection(FILE* input_file, const struct Ordered_contai
     {
          if ( get_title( input_file, title ) )
          {
-             assert(0);
              /* if given bad input clean up mem and return NULL */
              destroy_Collection( new_collection );
              return NULL;
@@ -148,12 +148,11 @@ struct Collection* load_Collection(FILE* input_file, const struct Ordered_contai
         
         
         
-        cur_record = get_data_ptr((struct Ordered_container*)records, comp_Record_to_title, title, NONE );
+        cur_record = get_data_ptr((struct Ordered_container*)records, comp_Record_to_title, title );
 
         /* read in the title and then check if it is in records */
         if (  cur_record == NULL   )
         {
-            assert(0);
             /* if given bad input clean up mem and return NULL */
             destroy_Collection( new_collection );
             return NULL;

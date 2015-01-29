@@ -27,7 +27,7 @@ Enter command: Catalog already has a collection with this name!
 
 Enter command: Member 2 Mars Attacks! added
 
-Enter command: Record is not a member in the collection!
+Enter command: Record is already a member in the collection!
 
 Enter command: Record is not a member in the collection!
 
@@ -41,4 +41,7 @@ Enter command: Could not open file!
 
 Enter command: Could not open file!
 
-Enter command: 
+Enter command: Invalid data found in file!
+
+Enter command: All data deleted
+Done

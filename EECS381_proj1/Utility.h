@@ -29,26 +29,6 @@
 #define TITLE_ARRAY_SIZE     TITLE_MAX_BUFF_SIZE + 1
 
 
-/* enum for Error Handeling */
-enum Error_e {
-    COMMAND,
-    DUPLICATE_REC,
-    DUPLICATE_COLL,
-    IN_COLL,
-    NOT_IN_COLL,
-    CANT_DELETE,
-    CLEAR_COLL,
-    NOT_FOUND_TITLE,
-    NOT_FOUND_ID,
-    NOT_FOUND_COLL,
-    READ_TITLE,
-    READ_INT,
-    RATING_RANGE,
-    FILE_OPEN,
-    INVAL_DATA,
-    ASSERT,
-    NONE
-};
 
 /* allocates memory of size given and returns a pointer to that block.
  
@@ -80,14 +60,8 @@ void free_string( char* src );
 /* on error clears the rest of the line and throws it away */
 void clear_line( void );
 
-/* print the unrecognized command error */
-void print_error( enum Error_e err  );
+void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr);
 
-void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum Error_e err );
 
-void* get_node(struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr, enum Error_e err );
-
-/* init static vars */ 
-char* init_global_fstring( char* input, int buffer_size );
 
 #endif /* defined(__EECS381_proj1__Utility__) */
