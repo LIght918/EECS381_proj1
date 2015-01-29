@@ -128,8 +128,6 @@ struct Collection* load_Collection(FILE* input_file, const struct Ordered_contai
     /* read in the name of the collection and the number of records*/
     if ( fscanf( input_file, "%" STRINGIFY( NAME_MAX_SIZE )"s %d\n", name, &num_records ) != 2 )
     {
-        printf("bad input\n" );
-        assert(0);
         return NULL;
     }
     

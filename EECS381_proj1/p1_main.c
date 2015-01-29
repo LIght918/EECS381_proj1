@@ -622,14 +622,15 @@ static void modify_rating( struct Ordered_container* lib_ID )
 static void remove_member( struct Ordered_container* lib_ID, struct Ordered_container* catalog )
 {
     int ID;
-    struct Record* rec;
+    
     /* load the collection */
-    struct Collection* coll = OC_get_data_ptr( find_collection_by_name( catalog ) );
+    void* data_ptr = find_collection_by_name( catalog ) ;
     
     /* check for read errors  */
-    if ( coll && read_int( &ID ) )
+    if ( data_ptr && read_int( &ID ) )
     {
-        
+        struct Record* rec;
+        struct Collection* coll = OC_get_data_ptr( data_ptr );
         rec = get_data_ptr( lib_ID, comp_Record_to_ID, &ID );
         /* make sure there is a record with that ID */
         if ( rec )
@@ -650,19 +651,24 @@ static void remove_member( struct Ordered_container* lib_ID, struct Ordered_cont
             print_error( "No record with that ID!\n" );
         }
     }
+    else
+    {
+        clear_line();
+    }
 }
 
 
 static void add_member( struct Ordered_container* lib_ID, struct Ordered_container* catalog )
 {
     int ID;
-    struct Record* rec;
     /* load the collection */
-    struct Collection* coll = OC_get_data_ptr( find_collection_by_name( catalog ) );
+    void* data_ptr = find_collection_by_name( catalog ) ;
     
     /* check for read errors  */
-    if ( coll && read_int( &ID ) )
+    if ( data_ptr && read_int( &ID ) )
     {
+        struct Record* rec;
+        struct Collection* coll = OC_get_data_ptr( data_ptr );
         
         rec = get_data_ptr( lib_ID, comp_Record_to_ID, &ID);
         
@@ -683,6 +689,10 @@ static void add_member( struct Ordered_container* lib_ID, struct Ordered_contain
         {
             print_error( "No record with that ID!\n" );
         }
+    }
+    else
+    {
+        clear_line();
     }
 }
 
@@ -797,7 +807,6 @@ static void load_from_file( struct Ordered_container* lib_title, struct Ordered_
         /* read in the number of things to load */
         if( fscanf( in_file, "%d", &num ) != 1 )
         {
-            assert( 0 );
             clear_all( lib_title, lib_ID, catalog, "" );
             print_error( "Invalid data found in file!\n" );
             return ;
@@ -814,9 +823,8 @@ static void load_from_file( struct Ordered_container* lib_title, struct Ordered_
                 const char* name = get_Record_title( rec );
                 
                 if ( OC_find_item_arg( lib_ID, &arg , comp_Record_to_ID ) != NULL
-                    || OC_find_item_arg( lib_title, name, comp_Record_to_title ))
+                    || OC_find_item_arg( lib_title, name, comp_Record_to_title ) != NULL )
                 {
-                    assert(0);
                     clear_all( lib_title, lib_ID, catalog, "" );
                     print_error( "Invalid data found in file!\n" );
                     return;
@@ -836,7 +844,6 @@ static void load_from_file( struct Ordered_container* lib_title, struct Ordered_
         /* read in the number of things to load */
         if( fscanf( in_file, "%d", &num ) != 1 )
         {
-            assert( 0 );
             clear_all( lib_title, lib_ID, catalog, "" );
             print_error( "Invalid data found in file!\n" );
             return ;
@@ -853,7 +860,6 @@ static void load_from_file( struct Ordered_container* lib_title, struct Ordered_
             }
             else
             {
-                assert(0);
                 clear_all( lib_title, lib_ID, catalog, "" );
                 print_error( "Invalid data found in file!\n" );
                 return;

@@ -44,7 +44,6 @@ struct Record* create_Record(const char* medium, const char* title)
 
 void destroy_Record(struct Record* record_ptr)
 {
-    assert( record_ptr );
     free_string( record_ptr->title );
     free_string( record_ptr->medium);
     free( record_ptr );
