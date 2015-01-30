@@ -50,7 +50,7 @@ struct Ordered_container* OC_create_container(OC_comp_fp_t f_ptr)
 	new_container->comp_func = f_ptr;
     init_Order_container( new_container );
 
-    /* keep track of the num of contianers */
+    /* keep track of the num of containers */
     g_Container_count++;
     
 	return new_container;
@@ -63,7 +63,7 @@ void OC_destroy_container(struct Ordered_container* c_ptr)
     
     free( c_ptr );
     
-    /* keep track of the num of contianers */
+    /* keep track of the num of containers */
     g_Container_count--;
 }
 
@@ -77,7 +77,7 @@ void OC_clear(struct Ordered_container* c_ptr)
     size = c_ptr->size;
     cur_node = c_ptr->first;
     
-    /* loop over teh whole container freeing memory */
+    /* loop over the whole container freeing memory */
     for ( i = 0 ; i < size ; ++i )
     {
         prev_node = cur_node ;
@@ -216,8 +216,8 @@ void OC_insert(struct Ordered_container* c_ptr, const void* data_ptr)
     }
     else
     {
-        /* its ok to increment it first time throught since we know it
-         isnt the first element */
+        /* its ok to increment it first time since we know it
+         isn't the first element */
         while ( ( cur_node = cur_node->next ) )
         {
             /* if the new data should be on the left of cur_node

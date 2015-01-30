@@ -61,22 +61,20 @@ const char* get_Record_title(const struct Record* record_ptr)
 
 void set_Record_rating(struct Record* record_ptr, int new_rating)
 {
-    /* should we enforce 1-5 rating */
     record_ptr->rating = new_rating;
 }
 
-/* is there a way to combine these two func */
 void print_Record(const struct Record* record_ptr)
 {
     if ( record_ptr->rating == 0 )
     {
         printf( "%d: %s u %s\n", record_ptr->ID,
-                record_ptr->medium, record_ptr->title );
+                    record_ptr->medium, record_ptr->title );
     }
     else
     {
         printf( "%d: %s %d %s\n",  record_ptr->ID, record_ptr->medium,
-                record_ptr->rating, record_ptr->title );
+                    record_ptr->rating, record_ptr->title );
     }
 }
 
@@ -84,7 +82,7 @@ void save_Record(const struct Record* record_ptr, FILE* outfile)
 {
 
     fprintf( outfile, "%d %s %d %s\n",  record_ptr->ID, record_ptr->medium,
-               record_ptr->rating, record_ptr->title );
+                    record_ptr->rating, record_ptr->title );
 }
 
 void reset_Record_ID_counter(void)
@@ -100,17 +98,11 @@ struct Record* load_Record(FILE* infile)
     char title [ TITLE_MAX_BUFF_SIZE ];
     
     /* read in from the file making sure not to overflow the buffer */
-    if ( fscanf( infile, "%d %" STRINGIFY( MEDIUM_MAX_SIZE )"s %d",
-                &ID, medium, &rating ) != 3 )
-    {
-        printf( "%d %s\n", ID, medium );
-        /* throw an error */
+    if ( fscanf( infile, "%d %" STRINGIFY( MEDIUM_MAX_SIZE )"s %d\n", &ID, medium, &rating ) != 3 )
         return NULL;
-    }
-    if ( get_title( infile, title ) ) {
-        /* throw an error */
+    
+    if ( get_title( infile, title ) )
         return NULL;
-    }
     
     new_record = create_Record( medium, title );
     
@@ -120,14 +112,11 @@ struct Record* load_Record(FILE* infile)
     
     /* set Record ID to the max value we have seen loading from the file
        and decrement it back to what it was before create_Record() was called */
+    
     if( ID > Record_ID_counter )
-    {
         Record_ID_counter = ID + 1;
-    } 
     else
-    {
-       Record_ID_counter--; 
-    }
+       Record_ID_counter--;
     
     return new_record;
 }

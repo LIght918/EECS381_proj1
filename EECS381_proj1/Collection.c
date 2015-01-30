@@ -1,10 +1,10 @@
 /*
-//  Collection.c
-//  EECS381_proj1
-//
-//  Created by Charlie OConor on 1/14/15.
-//  Copyright (c) 2015 Charlie OConor. All rights reserved.
-*/
+ //  Collection.c
+ //  EECS381_proj1
+ //
+ //  Created by Charlie OConor on 1/14/15.
+ //  Copyright (c) 2015 Charlie OConor. All rights reserved.
+ */
 
 #include "Collection.h"
 #include "Ordered_container.h"
@@ -30,11 +30,8 @@ struct Collection* create_Collection(const char* name)
     struct Collection* new_collection = safe_malloc( sizeof( struct Collection ) );
     
     /* alloc mem for name and copy it over */
-    new_collection->name = alloc_and_copy( name ); 
+    new_collection->name = alloc_and_copy( name );
     
-
-    
-    /* use strcpy as the comp func */
     new_collection->members = OC_create_container( comp_Record_by_title );
     
     return new_collection;
@@ -95,10 +92,7 @@ void print_Collection(const struct Collection* collection_ptr)
     printf( "Collection %s contains:", collection_ptr->name );
     
     if ( OC_empty( collection_ptr->members ) )
-    {
-        /* if empty print None */
         printf(" None" );
-    }
     
     printf("\n" );
     
@@ -110,38 +104,34 @@ void save_Collection(const struct Collection* collection_ptr, FILE* outfile)
     /* output the name and number of records in the Collection */
     fprintf( outfile, "%s %d\n", collection_ptr->name, OC_get_size( collection_ptr->members ) );
     
-    /* loop through the whole collection outputing the title to the file */
+    /* loop through the whole collection outputting the title to the file */
     OC_apply_arg( collection_ptr->members, ( OC_apply_arg_fp_t )print_record_title, outfile );
 }
 
 struct Collection* load_Collection(FILE* input_file, const struct Ordered_container* records)
 {
-    /* what do I do with records */
     char name[ NAME_MAX_SIZE ];
-    char title[ TITLE_MAX_BUFF_SIZE ];
     int  i, num_records;
     struct Collection* new_collection;
-    struct Record* cur_record = NULL;
     
     /* read in the name of the collection and the number of records
-       reads in the new line so first title can be read             */
+     reads in the new line so first title can be read             */
     if ( fscanf( input_file, "%" STRINGIFY( NAME_MAX_SIZE )"s %d\n", name, &num_records ) != 2 )
-    {
         return NULL;
-    }
     
     new_collection = create_Collection( name );
     
     for ( i = 0; i < num_records; ++i)
     {
-         if ( get_title( input_file, title ) )
-         {
-             /* if given bad input clean up mem and return NULL */
-             destroy_Collection( new_collection );
-             return NULL;
-         }
+        char title[ TITLE_MAX_BUFF_SIZE ];
+        struct Record* cur_record ;
         
-        
+        if ( get_title( input_file, title ) )
+        {
+            /* if given bad input clean up mem and return NULL */
+            destroy_Collection( new_collection );
+            return NULL;
+        }
         
         cur_record = get_data_ptr( (struct Ordered_container*)records, comp_Record_to_title, title );
         
@@ -152,7 +142,7 @@ struct Collection* load_Collection(FILE* input_file, const struct Ordered_contai
             destroy_Collection( new_collection );
             return NULL;
         }
-
+        
         OC_insert( new_collection->members, cur_record );
     }
     
@@ -161,5 +151,5 @@ struct Collection* load_Collection(FILE* input_file, const struct Ordered_contai
 
 static void print_record_title(const struct Record* record_ptr, FILE* outfile )
 {
-    fprintf( outfile, "%s\n", get_Record_title( record_ptr ) ); 
+    fprintf( outfile, "%s\n", get_Record_title( record_ptr ) );
 }

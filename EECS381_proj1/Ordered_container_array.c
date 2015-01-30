@@ -3,17 +3,17 @@
 #include "Utility.h"
 #include <stdlib.h>
 #define NDEBUG
-#include <assert.h> 
+#include <assert.h>
 
 
 #define DEFAULT_ALLOCATION 3
 
 /* A complete type declaration for Ordered_container implemented as an array */
 struct Ordered_container {
-	OC_comp_fp_t comp_fun;	/* pointer to comparison function  */
-	void** array;			/* pointer to array of pointers to void */
-	int allocation;			/* current size of array */
-	int size;				/* number of items currently in the array */
+    OC_comp_fp_t comp_fun;	/* pointer to comparison function  */
+    void** array;			/* pointer to array of pointers to void */
+    int allocation;			/* current size of array */
+    int size;				/* number of items currently in the array */
 };
 
 
@@ -88,8 +88,8 @@ void* OC_get_data_ptr(const void* item_ptr)
 void OC_delete_item(struct Ordered_container* c_ptr, void* item_ptr)
 {
     void** node = (void**)item_ptr;
-    /* find the new size and decrement the size member variable 
-       subarray_size = total_size - size of the front array */
+    /* find the new size and decrement the size member variable
+     subarray_size = total_size - size of the front array */
     int size_subarray = ( --c_ptr->size ) - (int)(  node - c_ptr->array );
     
     /* need to take care of globals */
@@ -132,7 +132,7 @@ void OC_insert(struct Ordered_container* c_ptr, const void* data_ptr)
     c_ptr->size++;
     g_Container_items_in_use++;
     
-    /* copy the data_ptr into the space we just made */ 
+    /* copy the data_ptr into the space we just made */
     *node = ( void* )data_ptr;
 }
 
@@ -222,7 +222,7 @@ static void OC_grow( struct Ordered_container* c_ptr )
     /* take care of global */
     g_Container_items_allocated += new_allocation - c_ptr->allocation;
     
-    /* we dont need the old array any more */
+    /* we don't need the old array any more */
     free( c_ptr->array );
     
     c_ptr->array = new_array;
@@ -237,7 +237,7 @@ static void init_Order_containter( struct Ordered_container* c_ptr )
     c_ptr->allocation = DEFAULT_ALLOCATION;
     
     c_ptr->array = safe_malloc( sizeof( void* ) * DEFAULT_ALLOCATION );
-
+    
     /* keep track of allocation */
     g_Container_items_allocated += DEFAULT_ALLOCATION;
 }
@@ -250,7 +250,7 @@ static void** OC_search( const struct Ordered_container* c_ptr, OC_comp_fp_t f_p
     
     if ( OC_empty( c_ptr ) )
     {
-        /* if its empty just retrun the first element in the array */
+        /* if its empty just return the first element in the array */
         return c_ptr->array;
     }
     

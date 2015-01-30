@@ -10,7 +10,6 @@
 #define EECS381_proj1__Utility__
 
 #include <stdio.h>
-#include "Ordered_container.h"
 
 /* converts macros into string literals */
 #define STRINGIFY2(X) #X
@@ -20,7 +19,7 @@
 #define NAME_MAX_SIZE 15
 #define MEDIUM_MAX_SIZE 7
 #define FILENAME_MAX_SIZE 31
-#define TITLE_MAX_BUFF_SIZE 63
+#define TITLE_MAX_BUFF_SIZE 64
 
 /* array sizes */
 #define NAME_ARRAY_SIZE      NAME_MAX_SIZE + 1
@@ -28,11 +27,11 @@
 #define FILENAME_ARRAY_SIZE  FILENAME_MAX_SIZE + 1
 #define TITLE_ARRAY_SIZE     TITLE_MAX_BUFF_SIZE + 1
 
-
+struct Ordered_container;
+typedef int (*find_item_arg_fp_t) (const void* arg_ptr, const void* data_ptr);
 
 /* allocates memory of size given and returns a pointer to that block.
- 
-   Terminates the program if memory allocation fails. */
+    Terminates the program if memory allocation fails with exit(1)  */
 void* safe_malloc( size_t size );
 
 /* loads int a title from a file the c_str title is required to have enough space alloc
@@ -42,12 +41,8 @@ int get_title( FILE* infile, char* title);
 /* uses strcmp on the title of each record and returns the value */
 int comp_Record_by_title( const void* left, const void* right );
 
-
-
 /* compares a record to a title returns ture if equal */ 
 int comp_Record_to_title(const void* arg_ptr, const void* data_ptr);
-
-
 
 /* allocate memory and copy the src string to it */
 char* alloc_and_copy( const char* src );
@@ -55,10 +50,7 @@ char* alloc_and_copy( const char* src );
 /* clean up memory and keep track of allocation */
 void free_string( char* src );
 
-/* on error clears the rest of the line and throws it away */
-void clear_line( void );
-
-void* get_data_ptr( struct Ordered_container* c_ptr, OC_find_item_arg_fp_t fafp, void* data_ptr);
+void* get_data_ptr( struct Ordered_container* c_ptr, find_item_arg_fp_t fafp, void* data_ptr);
 
 
 
