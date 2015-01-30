@@ -1,47 +1,46 @@
 size is 0
 
-inserting s3
+inserting (2, 1)
 size is 1
-s3
+(2, 1)
 
-inserting s1
+inserting (1, 1)
 size is 2
-s1
-s3
+(1, 1)
+(2, 1)
 
-inserting s4
+inserting (2, 2)
 size is 3
-s1
-s3
-s4
+(1, 1)
+(2, 1)
+(2, 2)
 
-inserting s2
+inserting (1, 2)
 size is 4
-s1
-s2
-s3
-s4
+(1, 1)
+(1, 2)
+(2, 1)
+(2, 2)
 
-search for s3:
-found item points to s3
+search for (1, 2):
+found item points to (1, 2)
 item removed
 size is 3
-s1
-s2
-s4
+(1, 1)
+(2, 1)
+(2, 2)
 
-search for s99:
+search for (99, 99):
 probed item not found
 size is 3
-s1
-s2
-s4
-I hate this item: s1
-I hate this item: s2
-I hate this item: s4
-I like this item: s1
-I like this item: s2
-I like this item: s4
+(1, 1)
+(2, 1)
+(2, 2)
+I hate this item: (1, 1)
+I hate this item: (2, 1)
+I hate this item: (2, 2)
+I like this item: (1, 1)
+I like this item: (2, 1)
+I like this item: (2, 2)
 size is 0
 Done
-Program ended with exit code: 0

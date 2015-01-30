@@ -810,8 +810,6 @@ static void clear_library( struct Ordered_container* lib_title, struct Ordered_c
         
         /* clear the container and destroy the records */
         clear_container(lib_title, ( void(*)(void*) )destroy_Record, output );
-        assert( OC_get_size( lib_ID ) == 0 );
-        assert( OC_get_size( lib_title ) == 0 ); 
     }
 }
 

@@ -26,7 +26,7 @@ int g_Container_items_allocated = 0 ;	/* number of Ordered_container items curre
 static void init_Order_containter( struct Ordered_container* c_ptr );
 static void OC_grow( struct Ordered_container* c_ptr );
 static void copy_array( void** array_old, void** array_new, int size );
-static void** OC_search( const struct Ordered_container* c_ptr, OC_comp_fp_t f_ptr, const void* arg_ptr );
+static void** OC_search_for_insert( const struct Ordered_container* c_ptr, OC_comp_fp_t f_ptr, const void* arg_ptr );
 static void* OC_bsearch( const struct Ordered_container* c_ptr, OC_comp_fp_t f_ptr, const void* arg_ptr );
 
 struct Ordered_container* OC_create_container(OC_comp_fp_t f_ptr)
@@ -42,18 +42,6 @@ struct Ordered_container* OC_create_container(OC_comp_fp_t f_ptr)
     return new_container;
 }
 
-void OC_destroy_container(struct Ordered_container* c_ptr)
-{
-    /* take care of global vars */
-    g_Container_count--;
-    g_Container_items_in_use -= c_ptr->size;
-    g_Container_items_allocated -= c_ptr->allocation;
-    
-    /* clean up memory */
-    free( c_ptr->array );
-    free( c_ptr );
-}
-
 void OC_clear(struct Ordered_container* c_ptr)
 {
     /* take care of global vars */
@@ -66,43 +54,28 @@ void OC_clear(struct Ordered_container* c_ptr)
     init_Order_containter( c_ptr );
 }
 
-int OC_get_size(const struct Ordered_container* c_ptr)
+static void init_Order_containter( struct Ordered_container* c_ptr )
 {
-    return c_ptr->size;
-}
-
-int OC_empty(const struct Ordered_container* c_ptr)
-{
-    return !c_ptr->size;
-}
-
-void* OC_get_data_ptr(const void* item_ptr)
-{
-    /* cast to a void** and dereference */
-    return *((void **)item_ptr);
-}
-
-
-
-
-void OC_delete_item(struct Ordered_container* c_ptr, void* item_ptr)
-{
-    void** node = (void**)item_ptr;
-    /* find the new size and decrement the size member variable
-     subarray_size = total_size - size of the front array */
-    int size_subarray = ( --c_ptr->size ) - (int)(  node - c_ptr->array );
+    /* set the values to their default values */
+    c_ptr->size = 0;
+    c_ptr->allocation = DEFAULT_ALLOCATION;
     
-    /* need to take care of globals */
-    g_Container_items_in_use--;
+    c_ptr->array = safe_malloc( sizeof( void* ) * DEFAULT_ALLOCATION );
     
-    copy_array( node + 1, node, size_subarray );
+    /* keep track of allocation */
+    g_Container_items_allocated += DEFAULT_ALLOCATION;
 }
 
-void* OC_find_item(const struct Ordered_container* c_ptr, const void* data_ptr)
+void OC_destroy_container(struct Ordered_container* c_ptr)
 {
-    void* node = OC_bsearch( c_ptr, c_ptr->comp_fun, data_ptr );
+    /* take care of global vars */
+    g_Container_count--;
+    g_Container_items_in_use -= c_ptr->size;
+    g_Container_items_allocated -= c_ptr->allocation;
     
-    return node;
+    /* clean up memory */
+    free( c_ptr->array );
+    free( c_ptr );
 }
 
 void OC_insert(struct Ordered_container* c_ptr, const void* data_ptr)
@@ -112,16 +85,12 @@ void OC_insert(struct Ordered_container* c_ptr, const void* data_ptr)
     
     /* check if we have enough size for and insert */
     if ( c_ptr->allocation == c_ptr->size )
-    {
         OC_grow( c_ptr );
-    }
     
     /* find the location to insert */
-    node = OC_search( c_ptr, c_ptr->comp_fun, data_ptr );
+    node = OC_search_for_insert( c_ptr, c_ptr->comp_fun, data_ptr );
     
     size_subarray = c_ptr->size - (int)( node - c_ptr->array ) ;
-    
-    /*printf("size of subarray %d\n", size_subarray );*/
     
     /* move the right part of the subarray on place to the right */
     for ( i = 0; i < size_subarray; ++i )
@@ -136,76 +105,19 @@ void OC_insert(struct Ordered_container* c_ptr, const void* data_ptr)
     *node = ( void* )data_ptr;
 }
 
-
-void* OC_find_item_arg(const struct Ordered_container* c_ptr, const void* arg_ptr, OC_find_item_arg_fp_t fafp)
+void OC_delete_item(struct Ordered_container* c_ptr, void* item_ptr)
 {
-    void* node = OC_bsearch(c_ptr, fafp, arg_ptr );
+    void** node = (void**)item_ptr;
     
-    return node;
+    /* find the new size and decrement the size member variable
+     subarray_size = total_size - size of the front array */
+    int size_subarray = ( --c_ptr->size ) - (int)(  node - c_ptr->array );
+    
+    /* need to take care of globals */
+    g_Container_items_in_use--;
+    
+    copy_array( node + 1, node, size_subarray );
 }
-
-
-void OC_apply(const struct Ordered_container* c_ptr, OC_apply_fp_t afp)
-{
-    int i;
-    void** cur_node = c_ptr->array;
-    
-    for ( i = 0 ; i < c_ptr->size; ++i)
-    {
-        afp( *cur_node++ );
-    }
-}
-
-int OC_apply_if(const struct Ordered_container* c_ptr, OC_apply_if_fp_t afp)
-{
-    int i;
-    void** cur_node = c_ptr->array;
-    
-    for ( i = 0 ; i < c_ptr->size; ++i)
-    {
-        int value = afp( *cur_node++ );
-        if ( value != 0 )
-        {
-            return value;
-        }
-    }
-    
-    return 0;
-}
-
-void OC_apply_arg(const struct Ordered_container* c_ptr, OC_apply_arg_fp_t afp, void* arg_ptr)
-{
-    int i;
-    void** cur_node = c_ptr->array;
-    
-    for ( i = 0 ; i < c_ptr->size; ++i)
-    {
-        afp( *cur_node++, arg_ptr );
-    }
-}
-
-int OC_apply_if_arg(const struct Ordered_container* c_ptr, OC_apply_if_arg_fp_t afp, void* arg_ptr)
-{
-    int i;
-    void** cur_node = c_ptr->array;
-    
-    for ( i = 0 ; i < c_ptr->size; ++i)
-    {
-        int value = afp( *cur_node++, arg_ptr );
-        
-        if ( value != 0 )
-        {
-            return value;
-        }
-    }
-    
-    return 0;
-}
-
-/*
- *  Helper functions
- */
-
 
 static void OC_grow( struct Ordered_container* c_ptr )
 {
@@ -230,19 +142,21 @@ static void OC_grow( struct Ordered_container* c_ptr )
 }
 
 
-static void init_Order_containter( struct Ordered_container* c_ptr )
+/* copies the old array to a new array
+ requires that the array_new has enough space to hold array_old
+ requires that size of old array be correct */
+static void copy_array( void** array_old, void** array_new, int size )
 {
-    /* set the values to their default values */
-    c_ptr->size = 0;
-    c_ptr->allocation = DEFAULT_ALLOCATION;
-    
-    c_ptr->array = safe_malloc( sizeof( void* ) * DEFAULT_ALLOCATION );
-    
-    /* keep track of allocation */
-    g_Container_items_allocated += DEFAULT_ALLOCATION;
+    int i;
+    for (i = 0; i < size; ++i )
+    {
+        *array_new = *array_old;
+        ++array_new;
+        ++array_old;
+    }
 }
 
-static void** OC_search( const struct Ordered_container* c_ptr, OC_comp_fp_t f_ptr, const void* arg_ptr )
+static void** OC_search_for_insert( const struct Ordered_container* c_ptr, OC_comp_fp_t f_ptr, const void* arg_ptr )
 {
     int left = 0 ;
     int right;
@@ -286,18 +200,15 @@ static void** OC_search( const struct Ordered_container* c_ptr, OC_comp_fp_t f_p
     return c_ptr->array + mid ;
 }
 
-/* copies the old array to a new array
- requires that the array_new has enough space to hold array_old
- requires that size of old array be correct */
-static void copy_array( void** array_old, void** array_new, int size )
+void* OC_find_item_arg(const struct Ordered_container* c_ptr, const void* arg_ptr, OC_find_item_arg_fp_t fafp)
 {
-    int i;
-    for (i = 0; i < size; ++i )
-    {
-        *array_new = *array_old;
-        array_new++;
-        array_old++;
-    }
+    return OC_bsearch(c_ptr, fafp, arg_ptr );
+}
+
+
+void* OC_find_item(const struct Ordered_container* c_ptr, const void* data_ptr)
+{
+    return OC_bsearch( c_ptr, c_ptr->comp_fun, data_ptr );
 }
 
 static void* OC_bsearch( const struct Ordered_container* c_ptr, OC_comp_fp_t f_ptr, const void* arg_ptr )
@@ -307,9 +218,7 @@ static void* OC_bsearch( const struct Ordered_container* c_ptr, OC_comp_fp_t f_p
     int mid = 0;
     
     if ( OC_empty( c_ptr ) )
-    {
         return NULL;
-    }
     
     right = c_ptr->size - 1;
     
@@ -339,3 +248,70 @@ static void* OC_bsearch( const struct Ordered_container* c_ptr, OC_comp_fp_t f_p
     return NULL;
 }
 
+void OC_apply(const struct Ordered_container* c_ptr, OC_apply_fp_t afp)
+{
+    int i;
+    for ( i = 0 ; i < c_ptr->size; ++i)
+    {
+        afp( c_ptr->array[ i ] );
+    }
+}
+
+int OC_apply_if(const struct Ordered_container* c_ptr, OC_apply_if_fp_t afp)
+{
+    int i;
+    
+    for ( i = 0 ; i < c_ptr->size; ++i)
+    {
+        int value = afp( c_ptr->array[ i ] );
+        if ( value != 0 )
+        {
+            return value;
+        }
+    }
+    
+    return 0;
+}
+
+void OC_apply_arg(const struct Ordered_container* c_ptr, OC_apply_arg_fp_t afp, void* arg_ptr)
+{
+    int i;
+    
+    for ( i = 0 ; i < c_ptr->size; ++i)
+    {
+        afp( c_ptr->array[ i ], arg_ptr );
+    }
+}
+
+int OC_apply_if_arg(const struct Ordered_container* c_ptr, OC_apply_if_arg_fp_t afp, void* arg_ptr)
+{
+    int i;
+    
+    for ( i = 0 ; i < c_ptr->size; ++i)
+    {
+        int value = afp( c_ptr->array[ i ], arg_ptr );
+        if ( value != 0 )
+        {
+            return value;
+        }
+    }
+    
+    return 0;
+}
+
+
+int OC_get_size(const struct Ordered_container* c_ptr)
+{
+    return c_ptr->size;
+}
+
+int OC_empty(const struct Ordered_container* c_ptr)
+{
+    return !c_ptr->size;
+}
+
+void* OC_get_data_ptr(const void* item_ptr)
+{
+    /* cast to a void** and dereference */
+    return *((void **)item_ptr);
+}

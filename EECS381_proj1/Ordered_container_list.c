@@ -41,6 +41,17 @@ static void init_Order_container( struct Ordered_container* c_ptr );
 /* updates the global vars keeping track of the count of items used and allocated */
 static void update_g_item_count( int num );
 
+void OC_destroy_container(struct Ordered_container* c_ptr)
+{
+    /* clean up items in container */
+    OC_clear( c_ptr );
+    
+    free( c_ptr );
+    
+    /* keep track of the num of containers */
+    g_Container_count--;
+}
+
 struct Ordered_container* OC_create_container(OC_comp_fp_t f_ptr)
 {
 	struct Ordered_container* new_container;
@@ -54,17 +65,6 @@ struct Ordered_container* OC_create_container(OC_comp_fp_t f_ptr)
     g_Container_count++;
     
 	return new_container;
-}
-
-void OC_destroy_container(struct Ordered_container* c_ptr)
-{
-    /* clean up items in container */
-    OC_clear( c_ptr );
-    
-    free( c_ptr );
-    
-    /* keep track of the num of containers */
-    g_Container_count--;
 }
 
 void OC_clear(struct Ordered_container* c_ptr)
@@ -91,12 +91,6 @@ void OC_clear(struct Ordered_container* c_ptr)
     update_g_item_count( (-1)*size );
 }
 
-
-int OC_get_size(const struct Ordered_container* c_ptr)
-{
-	return c_ptr->size; 
-}
-
 static void init_Order_container( struct Ordered_container* c_ptr )
 {
     /* set member vars to default values */
@@ -104,56 +98,6 @@ static void init_Order_container( struct Ordered_container* c_ptr )
     c_ptr->last = NULL;
     c_ptr->size = 0;
 }
-
-int OC_empty(const struct Ordered_container* c_ptr)
-{
-    return !OC_get_size( c_ptr );
-}
-
-void* OC_get_data_ptr(const void* item_ptr)
-{
-    /* cast the ptr and return the data_ptr */
-    return ( (struct LL_Node*)item_ptr )->data_ptr;
-}
-
-/* using a linear search due to this being a linked list O(n) */
-void* OC_find_item(const struct Ordered_container* c_ptr, const void* data_ptr)
-{
-    struct LL_Node* cur_node;
-    int comp_value;
-    
-    if ( c_ptr == NULL )
-    {
-        /* throw error */
-        return NULL;
-    }
-    
-    cur_node = c_ptr->first;
-    
-    
-    while ( cur_node != NULL )
-    {
-        
-        comp_value = c_ptr->comp_func( data_ptr, cur_node->data_ptr );
-        
-        if ( comp_value == 0  )
-        {
-            /* if we have found it just return */
-            return cur_node;
-        }
-        else if ( comp_value < 0 )
-        {
-            return NULL;
-        }
-        
-        /* increment the pointer */
-        cur_node = cur_node->next;
-    }
-    
-    /* if we make it out of the loop the date_ptr was not in the container */
-    return NULL;
-}
-
 
 void OC_delete_item(struct Ordered_container* c_ptr, void* item_ptr)
 {
@@ -243,6 +187,50 @@ void OC_insert(struct Ordered_container* c_ptr, const void* data_ptr)
     }
 }
 
+static void update_g_item_count( int num )
+{
+    /* make sure this works */
+    g_Container_items_allocated += num;
+    g_Container_items_in_use += num;
+}
+
+/* using a linear search due to this being a linked list O(n) */
+void* OC_find_item(const struct Ordered_container* c_ptr, const void* data_ptr)
+{
+    struct LL_Node* cur_node;
+    int comp_value;
+    
+    if ( c_ptr == NULL )
+    {
+        /* throw error */
+        return NULL;
+    }
+    
+    cur_node = c_ptr->first;
+    
+    
+    while ( cur_node != NULL )
+    {
+        
+        comp_value = c_ptr->comp_func( data_ptr, cur_node->data_ptr );
+        
+        if ( comp_value == 0  )
+        {
+            /* if we have found it just return */
+            return cur_node;
+        }
+        else if ( comp_value < 0 )
+        {
+            return NULL;
+        }
+        
+        /* increment the pointer */
+        cur_node = cur_node->next;
+    }
+    
+    /* if we make it out of the loop the date_ptr was not in the container */
+    return NULL;
+}
 
 void OC_apply(const struct Ordered_container* c_ptr, OC_apply_fp_t afp)
 {
@@ -321,11 +309,19 @@ int OC_apply_if_arg(const struct Ordered_container* c_ptr, OC_apply_if_arg_fp_t 
 
 	return 0; 
 }
-
-
-static void update_g_item_count( int num )
+int OC_get_size(const struct Ordered_container* c_ptr)
 {
-    /* make sure this works */
-    g_Container_items_allocated += num;
-    g_Container_items_in_use += num;
+    return c_ptr->size;
 }
+
+int OC_empty(const struct Ordered_container* c_ptr)
+{
+    return !OC_get_size( c_ptr );
+}
+
+void* OC_get_data_ptr(const void* item_ptr)
+{
+    /* cast the ptr and return the data_ptr */
+    return ( (struct LL_Node*)item_ptr )->data_ptr;
+}
+
